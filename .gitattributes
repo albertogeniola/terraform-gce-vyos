@@ -1,0 +1,13 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Handle shell script with linefeed
+*.sh text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Handle motd as linefeed
+images/vyos-gce-builder/resources/etc/motd text eol=lf
+
+
+
