@@ -1,0 +1,11 @@
+Welcome to VyOs
+=========================================================================
+Please note the following:
+*. This image is integrated with Google Ops Agent and supports metadata
+   ssh-keys login;
+*. You can still manage vyos configuration using the Serial Console,
+   logging in as vyos credentials: vyos/vyos;
+*. Note: vyos ssh plaintext/password is disabled.
+
+Built using https://github.com/albertogeniola/terraform-gce-vyos
+=========================================================================
