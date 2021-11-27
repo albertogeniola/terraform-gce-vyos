@@ -1,11 +1,12 @@
 # GCE VyOS module
-[VyOS][1] is an router open source operating system, based on the old [vyatta][2] virtual router implementation.
-VyOS runs on bare-metal devices and on all major cloud providers, including Google Cloud Platform.
+[VyOS][1] is a router open source operating system, based on the previous [vyatta][2] virtual router implementation.
+VyOS runs both on bare-metal devices as well as on all major cloud providers, including Google Cloud Platform.
 
 ## Motivation
 At the time of writing, there is no easy-to-go way to get VyOS running on GCP, except the Google Marketplace deploy. 
 While the [current version of VyOS][4] available on GCP marketplace is paid (even if it is an open-source project)
 it is not updated and does not come with Google Compute agent nor Google Ops Agent installed.
+This module addresses that issue and enables IaC projects to take advantage of VyOS instances with ease.
 
 ## Features
 This module achieves two major objectives:
@@ -15,6 +16,20 @@ This module achieves two major objectives:
 The VyOS instance is built leveraging packer scripts which build the VyOS image from source, install
 the GCE agents ([guest agent][5] and [ops agent][6]) and configure the automatic pub-sub 
 configuration-updater scripts.
+
+## Usage
+TBD
+
+### Image building notes
+TBD
+```bash
+packer init builder.pkr.hcl
+```
+
+```bash
+packer build -var "zone=europe-west3-c" -var "project-id=devops-dev-264808" -var "artifact-bucket=gs://devops-dev-264808-vyos-artifacts" builder.pkr.hcl
+```
+
 
 ## Requirements
 
@@ -55,14 +70,6 @@ the release ISOs are no longer free and can only be obtained
 via subscription, or by contributing to the community.
 ``` 
 
-
-```bash
-packer init builder.pkr.hcl
-```
-
-```bash
-packer build -var "zone=europe-west3-c" -var "project-id=devops-dev-264808" -var "artifact-bucket=gs://devops-dev-264808-vyos-artifacts" builder.pkr.hcl
-```
 
 [1]: https://vyos.io/
 [2]: https://en.wikipedia.org/wiki/Vyatta
