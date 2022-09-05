@@ -1,0 +1,61 @@
+name: GitHub Actions Demo
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install the dependencies
+        working-directory: ./packer/vyos-vanilla-builder/scripts
+        run: |
+          mkdir -p /home/packer/build_scripts
+          sudo apt-get update
+          sudo apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
+      - name: Pull docker image
+        working-directory: ./packer/vyos-vanilla-builder/scripts
+        run: |
+          docker pull "vyos/vyos-build:equuleus"
+      - name: Build image
+        working-directory: ./packer/vyos-vanilla-builder/scripts
+        run: |
+          cat <<'EOF' >> /home/vyos_bld/build_scripts/build_script.sh
+          #!/bin/bash
+          git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
+          cd vyos-build
+
+          # Configure
+          ./configure --architecture amd64 --build-by "Github Actions" --build-type=release --version equuleus
+
+          # Manipulate the image so that we add a default vyos-vyos user
+          echo "This was the default config"
+          cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
+          cp ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default.old
+          cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default | sed -e 's#encrypted-password \$6\$QxPS.uk6mfo\$9QBSo8u1FkH16gMyAVhus6fU3LOzvLR9Z9.82m3tiHFAxTtIkhaZSWssSgzt4v4dGAL8rhVQxTg0oAG9/q11h/##' | sed -e 's/plaintext-password \"\"/plaintext-password \"vyos\"/' > ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
+          echo "This was the changed config"
+          cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
+
+          # Build the ISO and the GCE instance (ISO is required to build the GCE image)
+          sudo make iso
+          sudo make GCE
+          EOF
+
+          docker run \
+              --rm \
+              -v "$(pwd)":/vyos \
+              -v "/$HOME/build_scripts":/home/vyos_bld/build_scripts \
+              -e VYOS_VERSION="equuleus" \
+              -e BUILD_BY="Github Action" \
+              -w /vyos \
+              --privileged \
+              --sysctl net.ipv6.conf.lo.disable_ipv6=0 \
+              -e GOSU_UID=$(id -u) \
+              -e GOSU_GID=$(id -g) \
+              "vyos/vyos-build:equuleus" \
+              bash "/home/vyos_bld/build_scripts/build_script.sh"
+      - name: Upload image
+        working-directory: ./packer/vyos-vanilla-builder/scripts
+        run: |
+          TAR_FILE_NAME="VyOS-$(date '+%Y%m%d').tar.gz"
+        
+
