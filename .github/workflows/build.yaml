@@ -59,6 +59,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Artifacts
-          path: ./vyos-build/build
-        
+          path: |
+            ./vyos-build/build/*.tar.gz
+            ./vyos-build/build/*.iso
+
 
