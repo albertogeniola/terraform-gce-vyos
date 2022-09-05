@@ -33,8 +33,14 @@ jobs:
           cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
 
           # Build the ISO and the GCE instance (ISO is required to build the GCE image)
+          echo "$(pwd)"
+          ls -l
           sudo make iso
+          echo "$(pwd)"
+          ls -l
           sudo make GCE
+          echo "$(pwd)"
+          ls -l
           EOF
 
           docker run \
@@ -53,6 +59,6 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Artifacts
-          path: $HOME/vyos-build/build
+          path: ./vyos-build/build
         
 
