@@ -13,7 +13,7 @@ jobs:
       - name: Pull docker image
         run: |
           docker pull "vyos/vyos-build:equuleus"
-      - name: Build image
+      - name: Prepare Build Script
         run: |
           mkdir ./.packer
           cat <<'EOF' >> ./.packer/build_script.sh
@@ -35,14 +35,10 @@ jobs:
           # Build the ISO and the GCE instance (ISO is required to build the GCE image)
           echo "$(pwd)"
           ls -l
-          sudo make iso
-          echo "$(pwd)"
-          ls -l ./build
-          sudo make GCE
-          echo "$(pwd)"
-          ls -l ./build
+          sudo make $1
           EOF
-
+      - name: Build iso
+        run: |
           docker run \
               --rm \
               -v "$(pwd)":/vyos \
@@ -55,12 +51,29 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/.packer/build_script.sh"
+              bash "/home/vyos_bld/.packer/build_script.sh iso"
       - uses: actions/upload-artifact@v3
         with:
-          name: Artifacts
+          name: iso
+          path: |
+            ./vyos-build/build/*.iso
+       - name: Build GCE Image
+         run: |
+          docker run \
+              --rm \
+              -v "$(pwd)":/vyos \
+              -v "$(pwd)/.packer":/home/vyos_bld/.packer \
+              -e VYOS_VERSION="equuleus" \
+              -e BUILD_BY="Github Action" \
+              -w /vyos \
+              --privileged \
+              --sysctl net.ipv6.conf.lo.disable_ipv6=0 \
+              -e GOSU_UID=$(id -u) \
+              -e GOSU_GID=$(id -g) \
+              "vyos/vyos-build:equuleus" \
+              bash "/home/vyos_bld/.packer/build_script.sh GCE"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: disk-image
           path: |
             ./vyos-build/build/*.tar.gz
-            ./vyos-build/build/**/*.iso
-
-
