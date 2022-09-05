@@ -51,7 +51,7 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/.packer/build_script.sh iso"
+              bash "/home/vyos_bld/.packer/build_script.sh" iso
       - uses: actions/upload-artifact@v3
         with:
           name: iso
@@ -71,7 +71,7 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/.packer/build_script.sh GCE"
+              bash "/home/vyos_bld/.packer/build_script.sh" GCE
       - uses: actions/upload-artifact@v3
         with:
           name: disk-image
