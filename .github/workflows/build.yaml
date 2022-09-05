@@ -37,10 +37,10 @@ jobs:
           ls -l
           sudo make iso
           echo "$(pwd)"
-          ls -l
+          ls -l ./build
           sudo make GCE
           echo "$(pwd)"
-          ls -l
+          ls -l ./build
           EOF
 
           docker run \
@@ -61,6 +61,6 @@ jobs:
           name: Artifacts
           path: |
             ./vyos-build/build/*.tar.gz
-            ./vyos-build/build/*.iso
+            ./vyos-build/build/**/*.iso
 
 
