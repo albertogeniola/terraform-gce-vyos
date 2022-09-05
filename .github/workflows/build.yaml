@@ -50,8 +50,9 @@ jobs:
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
               bash "/home/vyos_bld/.packer/build_script.sh"
-      - name: Upload image
-        run: |
-          TAR_FILE_NAME="VyOS-$(date '+%Y%m%d').tar.gz"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Artifacts
+          path: $HOME/vyos-build/build
         
 
