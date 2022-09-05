@@ -8,7 +8,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Install the dependencies
         run: |
-          mkdir -p /home/packer/build_scripts
           sudo apt-get update
           sudo apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
       - name: Pull docker image
@@ -16,7 +15,8 @@ jobs:
           docker pull "vyos/vyos-build:equuleus"
       - name: Build image
         run: |
-          cat <<'EOF' >> /home/vyos_bld/build_scripts/build_script.sh
+          mkdir ./.packer
+          cat <<'EOF' >> ./.packer/build_script.sh
           #!/bin/bash
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
           cd vyos-build
@@ -40,7 +40,7 @@ jobs:
           docker run \
               --rm \
               -v "$(pwd)":/vyos \
-              -v "/$HOME/build_scripts":/home/vyos_bld/build_scripts \
+              -v "/$HOME/build_scripts":./.packer/build_script.sh \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
               -w /vyos \
@@ -49,9 +49,8 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/build_scripts/build_script.sh"
+              bash "./.packer/build_script.sh"
       - name: Upload image
-        working-directory: ./packer/vyos-vanilla-builder/scripts
         run: |
           TAR_FILE_NAME="VyOS-$(date '+%Y%m%d').tar.gz"
         
