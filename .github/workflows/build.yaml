@@ -1,7 +1,7 @@
 name: GitHub Actions Demo
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Build VyOs GCE Disk:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -40,7 +40,7 @@ jobs:
           docker run \
               --rm \
               -v "$(pwd)":/vyos \
-              -v "/$HOME/build_scripts":./.packer/build_script.sh \
+              -v "$(pwd)/.packer":/home/vyos_bld/.packer \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
               -w /vyos \
@@ -49,7 +49,7 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "./.packer/build_script.sh"
+              bash "/home/vyos_bld/.packer/build_script.sh"
       - name: Upload image
         run: |
           TAR_FILE_NAME="VyOS-$(date '+%Y%m%d').tar.gz"
