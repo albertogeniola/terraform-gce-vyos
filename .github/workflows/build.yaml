@@ -73,8 +73,7 @@ jobs:
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
               bash "/home/vyos_bld/.packer/build_script.sh" GCE
-      - name: Set image name outut
-        run: echo "::set-output name=tarname::VyOS-$(date '+%Y%m%d').tar.gz"
+          echo "::set-output name=tarname::VyOS-$(date '+%Y%m%d').tar.gz"
       - uses: actions/upload-artifact@v3
         with:
           name: disk-image
