@@ -75,5 +75,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: disk-image
-          path: |
-            ./vyos-build/build/*.tar.gz
+          path: ./vyos-build/build/VyOS-$(date '+%Y%m%d').tar.gz
