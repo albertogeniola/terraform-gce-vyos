@@ -9,6 +9,7 @@ jobs:
     outputs:
       should_build: ${{ steps.existing_release_id.outputs.id != null }}
       commit: ${{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
+      commit_datetime: ${{ steps.check_commit.outputs.COMMIT_DATETIME}}
     steps:
       - name: Get vyos-build info
         id: check_commit
@@ -17,9 +18,11 @@ jobs:
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
           cd vyos-build
           COMMIT_ID=$(git rev-parse HEAD)
+          COMMIT_DATETIME=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S' $COMMIT_ID)
 
           # Save the commit id as output
           echo "::set-output name=EQUULEUS_COMMIT::$COMMIT_ID"
+          echo "::set-output name=COMMIT_DATETIME::$COMMIT_DATETIME"
 
           # Remove the cloned data
           cd ..
@@ -30,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          tag: ${{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
+          tag: ${{ needs.CheckBuildRequired.outputs.commit_datetime }}
           doNotFailIfNotFound: true
 
   BuildAndRelease:
@@ -121,9 +124,9 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ needs.CheckBuildRequired.outputs.commit }}"
+          automatic_release_tag: "${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
           prerelease: true
-          title: "Development Build"
+          title: "Build commit ${{ needs.CheckBuildRequired.outputs.commit }} on ${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
           files: |
             *.iso
             *.tar.gz
