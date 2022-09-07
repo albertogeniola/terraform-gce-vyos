@@ -116,13 +116,13 @@ jobs:
               bash "/home/vyos_bld/.packer/build_script.sh" GCE
       - uses: actions/upload-artifact@v3
         with:
-          name: GCE-IMGE
+          name: GCE-IMAGE
           path: ./vyos-build/build/*.tar.gz
       - name: Move GCE image
         run: |
           mv ./vyos-build/build/*.tar.gz ./
-          SOURCE=$(ls VyOS-*.tar.gz)
-          mv $SOURCE vyos-gce-image.tar.gz
+          SOURCE=$(ls ./vyos-build/build/VyOS-*.tar.gz)
+          mv "$SOURCE" vyos-gce-image.tar.gz
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
