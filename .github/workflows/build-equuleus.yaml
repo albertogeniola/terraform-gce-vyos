@@ -1,9 +1,27 @@
-name: GitHub Actions Demo
+name: Build Equuleus
 on: [push]
+#  push:
+#    branches:
+#      - equuleus
 jobs:
   BuildGCE:
     runs-on: ubuntu-latest
     steps:
+      - name: Check build required
+        id: check_commit
+        run: |
+          # Clone the build script
+          git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
+          cd vyos-build
+          COMMIT_ID=git rev-parse HEAD
+
+          # Save the commit id as output
+          echo '::set-output name=EQUULEUS_COMMIT::$COMMIT_ID'
+
+          # Remove the cloned data
+          cd ..
+          rm -R vyos-build
+
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Install the dependencies
@@ -20,6 +38,7 @@ jobs:
           #!/bin/bash
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
           cd vyos-build
+          git checkout {{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
 
           # Configure
           ./configure --architecture amd64 --build-by "Github Actions" --build-type=release --version equuleus
@@ -37,7 +56,7 @@ jobs:
           ls -l
           sudo make $1
           EOF
-      - name: Build iso
+      - name: Build ISO
         run: |
           docker run \
               --rm \
@@ -54,9 +73,12 @@ jobs:
               bash "/home/vyos_bld/.packer/build_script.sh" iso
       - uses: actions/upload-artifact@v3
         with:
-          name: iso
+          name: ISO
           path: |
             ./vyos-build/build/*.iso
+      - name: Move ISO
+        run: |
+          mv ./vyos-build/build/*.iso ./
       - id: buildgce
         name: Build GCE Image
         run: |
@@ -73,8 +95,19 @@ jobs:
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
               bash "/home/vyos_bld/.packer/build_script.sh" GCE
-          echo "::set-output name=tarname::VyOS-$(date '+%Y%m%d').tar.gz"
       - uses: actions/upload-artifact@v3
         with:
-          name: disk-image
-          path: ./vyos-build/build/${{ steps.buildgce.outputs.tarname }}
+          name: GCE-IMGE
+          path: ./vyos-build/build/*.tar.gz
+      - name: Move GCE image
+        run: |
+          mv ./vyos-build/build/*.tar.gz ./
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: steps.check_commit.outputs.EQUULEUS_COMMIT
+          prerelease: true
+          title: "Development Build"
+          files: |
+            *.iso
+            *.tar.gz
