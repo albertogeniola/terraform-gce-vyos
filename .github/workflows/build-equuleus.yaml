@@ -16,7 +16,7 @@ jobs:
           # Clone the build script
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
           cd vyos-build
-          COMMIT_ID=git rev-parse HEAD
+          COMMIT_ID=$(git rev-parse HEAD)
 
           # Save the commit id as output
           echo '::set-output name=EQUULEUS_COMMIT::$COMMIT_ID'
