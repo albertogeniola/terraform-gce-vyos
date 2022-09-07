@@ -70,10 +70,10 @@ jobs:
           # Manipulate the image so that we add a default vyos-vyos user
           echo "This was the default config"
           cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
-          cp ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default.old
-          cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default | sed -e 's#encrypted-password \$6\$QxPS.uk6mfo\$9QBSo8u1FkH16gMyAVhus6fU3LOzvLR9Z9.82m3tiHFAxTtIkhaZSWssSgzt4v4dGAL8rhVQxTg0oAG9/q11h/##' | sed -e 's/plaintext-password \"\"/plaintext-password \"vyos\"/' > ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
-          echo "This was the changed config"
-          cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
+          #cp ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default.old
+          #cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default | sed -e 's#encrypted-password \$6\$QxPS.uk6mfo\$9QBSo8u1FkH16gMyAVhus6fU3LOzvLR9Z9.82m3tiHFAxTtIkhaZSWssSgzt4v4dGAL8rhVQxTg0oAG9/q11h/##' | sed -e 's/plaintext-password \"\"/plaintext-password \"vyos\"/' > ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
+          #echo "This was the changed config"
+          #cat ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
 
           # Build the ISO and the GCE instance (ISO is required to build the GCE image)
           echo "$(pwd)"
