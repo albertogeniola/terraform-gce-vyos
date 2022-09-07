@@ -121,6 +121,8 @@ jobs:
       - name: Move GCE image
         run: |
           mv ./vyos-build/build/*.tar.gz ./
+          SOURCE=$(ls VyOS-*.tar.gz)
+          mv $SOURCE vyos-gce-image.tar.gz
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -129,4 +131,4 @@ jobs:
           title: "Build commit ${{ needs.CheckBuildRequired.outputs.commit }} on ${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
           files: |
             *.iso
-            *.tar.gz
+            vyos-equuleus-gce-image.tar.gz
