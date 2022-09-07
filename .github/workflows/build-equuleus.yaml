@@ -142,7 +142,7 @@ jobs:
           docker run \
               --rm \
               -v "$(pwd)":/vyos \
-              -v "$(pwd)/.patches:/patches"
+              -v "$(pwd)/.patches:/patches" \
               -v "$(pwd)/.packer":/home/vyos_bld/.packer \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
@@ -167,6 +167,7 @@ jobs:
           docker run \
               --rm \
               -v "$(pwd)":/vyos \
+              -v "$(pwd)/.patches:/patches" \
               -v "$(pwd)/.packer":/home/vyos_bld/.packer \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
