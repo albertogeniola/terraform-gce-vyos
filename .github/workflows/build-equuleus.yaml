@@ -33,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          tag: ${{ needs.CheckBuildRequired.outputs.commit_datetime }}
+          tag: ${{ steps.check_commit.outputs.COMMIT_DATETIME }}
           doNotFailIfNotFound: true
 
   BuildAndRelease:
