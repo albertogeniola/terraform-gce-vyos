@@ -126,7 +126,7 @@ jobs:
           #!/bin/bash
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
           cd vyos-build
-          git checkout {{ needs.CheckBuildRequired.outputs.commit }}
+          git checkout ${{ needs.CheckBuildRequired.outputs.commit }}
 
           # Configure
           ./configure --architecture amd64 --build-by "Github Actions" --build-type=release --version equuleus
