@@ -41,6 +41,11 @@ jobs:
     needs: CheckBuildRequired
     runs-on: ubuntu-latest
     steps:
+      - name: Print info
+        run: |
+          echo "Should Build: ${{ needs.CheckBuildRequired.outputs.should_build }}"
+          echo "Commit Datetime: ${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
+          echo "Commit Hash: ${{ needs.CheckBuildRequired.outputs.commit }}"
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Install the dependencies
