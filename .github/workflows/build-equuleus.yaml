@@ -19,7 +19,7 @@ jobs:
           COMMIT_ID=$(git rev-parse HEAD)
 
           # Save the commit id as output
-          echo '::set-output name=EQUULEUS_COMMIT::$COMMIT_ID'
+          echo "::set-output name=EQUULEUS_COMMIT::$COMMIT_ID"
 
           # Remove the cloned data
           cd ..
