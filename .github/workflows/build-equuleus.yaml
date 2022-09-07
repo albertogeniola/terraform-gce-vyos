@@ -34,6 +34,7 @@ jobs:
           doNotFailIfNotFound: true
 
   BuildAndRelease:
+    if: ${{ needs.CheckBuildRequired.outputs.should_build }}
     needs: CheckBuildRequired
     runs-on: ubuntu-latest
     steps:
