@@ -7,7 +7,7 @@ jobs:
   CheckBuildRequired:
     runs-on: ubuntu-latest
     outputs:
-      should_build: ${{ steps.existing_release_id.outputs.id != null }}
+      should_build: ${{ steps.existing_release_id.outputs.id == null }}
       commit: ${{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
       commit_datetime: ${{ steps.check_commit.outputs.COMMIT_DATETIME}}
     steps:
