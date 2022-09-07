@@ -120,9 +120,8 @@ jobs:
           path: ./vyos-build/build/*.tar.gz
       - name: Move GCE image
         run: |
-          mv ./vyos-build/build/*.tar.gz ./
           SOURCE=$(ls ./vyos-build/build/VyOS-*.tar.gz)
-          mv "$SOURCE" vyos-gce-image.tar.gz
+          mv "$SOURCE" ./vyos-equuleus-gce-image.tar.gz
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
