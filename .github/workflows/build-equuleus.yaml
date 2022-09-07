@@ -4,10 +4,13 @@ on: [push]
 #    branches:
 #      - equuleus
 jobs:
-  BuildGCE:
+  CheckBuildRequired:
     runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.existing_release_id.outputs.id != null }}
+      commit: ${{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
     steps:
-      - name: Check build required
+      - name: Get vyos-build info
         id: check_commit
         run: |
           # Clone the build script
@@ -21,7 +24,19 @@ jobs:
           # Remove the cloned data
           cd ..
           rm -R vyos-build
+      - name: Check local release exists
+        id: existing_release_id
+        uses: cardinalby/git-get-release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag: ${{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
+          doNotFailIfNotFound: true
 
+  BuildAndRelease:
+    needs: CheckBuildRequired
+    runs-on: ubuntu-latest
+    steps:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Install the dependencies
@@ -38,7 +53,7 @@ jobs:
           #!/bin/bash
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
           cd vyos-build
-          git checkout {{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
+          git checkout {{ needs.CheckBuildRequired.outputs.commit }}
 
           # Configure
           ./configure --architecture amd64 --build-by "Github Actions" --build-type=release --version equuleus
@@ -105,7 +120,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: steps.check_commit.outputs.EQUULEUS_COMMIT
+          automatic_release_tag: "${{ needs.CheckBuildRequired.outputs.commit }}"
           prerelease: true
           title: "Development Build"
           files: |
