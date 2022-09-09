@@ -174,7 +174,7 @@ jobs:
           # Manipulate the image so that we add minimum configuration file for GCE
           #cp /patches/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
           cp /patches/config.boot.default ./tools/cloud-init/GCE/config.boot.default
-          cp /patches/91-gce-test.chroot ./data/live-build-config/hooks/live/91-gce-test.chroot
+          cp /patches/*.chroot ./data/live-build-config/hooks/live/*.chroot
           
           # Build the ISO and the GCE instance (ISO is required to build the GCE image)
           sudo make $1
