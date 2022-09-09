@@ -57,7 +57,7 @@ jobs:
           docker pull "vyos/vyos-build:equuleus"
       - name: Prepare local folders
         run: |
-          mkdir ./.packer
+          mkdir ./.builder
           mkdir ./.patches
       - name: Prepare Build Script
         run: |
@@ -126,21 +126,7 @@ jobs:
           // Release version: equuleus
           EOF
 
-          cat <<'EOF' >> ./.patches/91-gce-agent.chroot
-          #!/bin/bash
-          # Install the Google Ops Agent
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-          VERSION_CODENAME=buster
-          sudo tee /etc/apt/sources.list.d/google-cloud.list << EOM
-          deb http://packages.cloud.google.com/apt google-compute-engine-${VERSION_CODENAME}-stable main
-          deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-${VERSION_CODENAME} main
-          EOM
-          sudo apt update
-          sudo apt install -y google-cloud-packages-archive-keyring
-          sudo apt install -y google-compute-engine google-osconfig-agent
-          EOF
-
-          cat <<'EOF' >> ./.packer/build_script.sh
+          cat <<'EOF' >> ./.builder/build_script.sh
           #!/bin/bash
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
           cd vyos-build
@@ -163,7 +149,7 @@ jobs:
               --rm \
               -v "$(pwd)":/vyos \
               -v "$(pwd)/.patches:/patches" \
-              -v "$(pwd)/.packer":/home/vyos_bld/.packer \
+              -v "$(pwd)/.builder":/home/vyos_bld/.builder \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
               -w /vyos \
@@ -172,7 +158,7 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/.packer/build_script.sh" iso
+              bash "/home/vyos_bld/.builder/build_script.sh" iso
       - uses: actions/upload-artifact@v3
         with:
           name: ISO
@@ -188,7 +174,7 @@ jobs:
               --rm \
               -v "$(pwd)":/vyos \
               -v "$(pwd)/.patches:/patches" \
-              -v "$(pwd)/.packer":/home/vyos_bld/.packer \
+              -v "$(pwd)/.builder":/home/vyos_bld/.builder \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
               -w /vyos \
@@ -197,7 +183,7 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/.packer/build_script.sh" GCE
+              bash "/home/vyos_bld/.builder/build_script.sh" GCE
       - uses: actions/upload-artifact@v3
         with:
           name: GCE-IMAGE
