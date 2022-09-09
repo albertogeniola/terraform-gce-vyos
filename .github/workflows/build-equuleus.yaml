@@ -89,7 +89,7 @@ jobs:
                       speed 38400
                   }
               }
-              host-name vyos
+              host-name vyosgce
               login {
                   user vyos {
                       authentication {
@@ -132,7 +132,8 @@ jobs:
           ./configure --architecture amd64 --build-by "Github Actions" --build-type=release --version equuleus
 
           # Manipulate the image so that we add minimum configuration file for GCE
-          cp /patches/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
+          #cp /patches/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
+          cp /patches/config.boot.default ./tools/cloud-init/GCE/config.boot.default
           
           # Build the ISO and the GCE instance (ISO is required to build the GCE image)
           sudo make $1
