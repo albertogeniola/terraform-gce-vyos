@@ -69,6 +69,12 @@ jobs:
               loopback lo {
               }
           }
+          service {
+              ssh {
+                  listen-address 0.0.0.0
+                  port 22
+              }
+          }
           system {
               config-management {
                   commit-revisions 100
