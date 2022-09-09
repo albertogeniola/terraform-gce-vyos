@@ -89,7 +89,7 @@ jobs:
                       speed 38400
                   }
               }
-              host-name vyosgce
+              host-name vyos-gce
               login {
                   user vyos {
                       authentication {
@@ -122,6 +122,11 @@ jobs:
           // Release version: equuleus
           EOF
 
+          cat <<'EOF' >> ./.patches/91-gce-test.chroot
+          #!/bin/bash
+          echo "IT WORKED">/home/worked.txt
+          EOF
+
           cat <<'EOF' >> ./.packer/build_script.sh
           #!/bin/bash
           git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
@@ -134,6 +139,7 @@ jobs:
           # Manipulate the image so that we add minimum configuration file for GCE
           #cp /patches/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
           cp /patches/config.boot.default ./tools/cloud-init/GCE/config.boot.default
+          cp /patches/91-gce-test.chroot ./data/live-build-config/hooks/live/91-gce-test.chroot
           
           # Build the ISO and the GCE instance (ISO is required to build the GCE image)
           sudo make $1
