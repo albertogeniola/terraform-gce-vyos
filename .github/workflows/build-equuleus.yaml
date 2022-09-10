@@ -65,7 +65,7 @@ jobs:
         run: |
           # Manipulate the image so that we add minimum configuration file for GCE
           cp ./vyos-gce-image/build-patches/tools/cloud-init/GCE/config.boot.default ./vyos-build/tools/cloud-init/GCE/config.boot.default
-          cp -vR ./vyos-gce-image/chroot-patches/* ./vyos-build/data/live-build-config/includes/chroot/
+          cp -vR ./vyos-gce-image/chroot-patches/* ./vyos-build/data/live-build-config/includes.chroot/
           cp -vR ./vyos-gce-image/live-hooks-patches/* ./vyos-build/data/live-build-config/hooks/live/
       - name: Build ISO
         run: |
