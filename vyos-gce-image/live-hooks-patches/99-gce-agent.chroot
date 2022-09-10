@@ -3,7 +3,9 @@ echo "Live hook executed" > /home/executed.txt
 
 # Install the Google Ops Agent
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-eval $(grep DIST /etc/os-release)
+echo "XXXXXXX-DEBUG"
+cat /etc/os-release
+DIST=buster
 tee /etc/apt/sources.list.d/google-cloud.list << EOM
 deb http://packages.cloud.google.com/apt google-compute-engine-${DIST}-stable main
 deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-${DIST} main
