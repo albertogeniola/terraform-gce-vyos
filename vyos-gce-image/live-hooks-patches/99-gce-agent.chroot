@@ -11,19 +11,19 @@ EOM
 
 # Setup the official repositories
 # Stable is now BULLSEYE, while buster is OLDSTABLE
-# The following 2 lines won't work with BUSTER, so we change thme to rely on STABLE instead of BUSTER
+# The following 2 lines are for BUSTER, they won't work for bullseye
+#deb http://security.debian.org/debian-security ${REPO_CODENAME}/updates main
+#deb-src http://security.debian.org/debian-security ${REPO_CODENAME}/updates main
 
-REPO_CODENAME=buster
+#REPO_CODENAME=buster
+REPO_CODENAME=bullseye
 tee /etc/apt/sources.list.d/debian-${REPO_CODENAME}.list << EOM
 deb http://deb.debian.org/debian/ ${REPO_CODENAME} main
 deb-src http://deb.debian.org/debian/ ${REPO_CODENAME} main
 deb http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
 deb-src http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
-deb http://security.debian.org/debian-security ${REPO_CODENAME}/updates main
-deb-src http://security.debian.org/debian-security ${REPO_CODENAME}/updates main
-
-deb http://security.debian.org/debian-security/ bullseye-security main
-deb-src http://security.debian.org/debian-security/ bullseye-security main
+deb http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
+deb-src http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
 EOM
 
 
