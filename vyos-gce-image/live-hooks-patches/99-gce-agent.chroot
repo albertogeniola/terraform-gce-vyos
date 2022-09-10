@@ -2,20 +2,23 @@
 echo "Live hook executed" > /home/executed.txt
 
 # Install the Google Ops Agent
-REPO_CODENAME=bullseye
+REPO_CODENAME=buster
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 tee /etc/apt/sources.list.d/google-cloud.list << EOM
 deb http://packages.cloud.google.com/apt google-compute-engine-${REPO_CODENAME}-stable main
 deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-${REPO_CODENAME} main
 EOM
 
+#deb http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
+#deb-src http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
+
 tee /etc/apt/sources.list.d/debian-${REPO_CODENAME}.list << EOM
 deb http://deb.debian.org/debian/ ${REPO_CODENAME} main
 deb-src http://deb.debian.org/debian/ ${REPO_CODENAME} main
+deb http://security.debian.org/debian-security/ ${REPO_CODENAME}/security main
+deb-src http://security.debian.org/debian-security/ ${REPO_CODENAME}/security main
 deb http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
 deb-src http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
-deb http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
-deb-src http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
 EOM
 
 
