@@ -35,6 +35,11 @@ jobs:
         with:
           tag: ${{ steps.check_commit.outputs.COMMIT_DATETIME }}
           doNotFailIfNotFound: true
+      - name: Print outputs
+        run: |
+          echo "Release ID: ${{ steps.existing_release_id.outputs.id }}"
+          echo "Release ID is NULL?: ${{ steps.existing_release_id.outputs.id == null }}"
+          echo "Tag Name: ${{ steps.existing_release_id.outputs.tag_name }}"
 
   BuildAndRelease:
     if: ${{ needs.CheckBuildRequired.outputs.should_build }}
