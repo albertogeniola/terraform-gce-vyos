@@ -2,21 +2,13 @@
 echo "Live hook executed" > /home/executed.txt
 
 # Install the Google Ops Agent
+REPO_CODENAME=bullseye
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-eval $(grep VERSION_CODENAME /etc/os-release)
 tee /etc/apt/sources.list.d/google-cloud.list << EOM
-deb http://packages.cloud.google.com/apt google-compute-engine-${VERSION_CODENAME}-stable main
-deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-${VERSION_CODENAME} main
+deb http://packages.cloud.google.com/apt google-compute-engine-${REPO_CODENAME}-stable main
+deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-${REPO_CODENAME} main
 EOM
 
-# Setup the official repositories
-# Stable is now BULLSEYE, while buster is OLDSTABLE
-# The following 2 lines are for BUSTER, they won't work for bullseye
-#deb http://security.debian.org/debian-security ${REPO_CODENAME}/updates main
-#deb-src http://security.debian.org/debian-security ${REPO_CODENAME}/updates main
-
-#REPO_CODENAME=buster
-REPO_CODENAME=bullseye
 tee /etc/apt/sources.list.d/debian-${REPO_CODENAME}.list << EOM
 deb http://deb.debian.org/debian/ ${REPO_CODENAME} main
 deb-src http://deb.debian.org/debian/ ${REPO_CODENAME} main
