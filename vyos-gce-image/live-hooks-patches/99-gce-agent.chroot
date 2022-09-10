@@ -21,8 +21,8 @@ deb http://deb.debian.org/debian/ ${REPO_CODENAME} main
 deb-src http://deb.debian.org/debian/ ${REPO_CODENAME} main
 deb http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
 deb-src http://deb.debian.org/debian ${REPO_CODENAME}-updates main
-deb http://security.debian.org/debian-security stable main
-deb-src http://security.debian.org/debian-security stable main
+deb http://security.debian.org/debian-security bullseye main
+deb-src http://security.debian.org/debian-security bullseye main
 EOM
 
 
