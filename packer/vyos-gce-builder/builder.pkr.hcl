@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     googlecompute = {
-      version = ">= 0.0.1"
+      version = "= 1.0.13"
       source = "github.com/hashicorp/googlecompute"
     }
   }
@@ -41,6 +41,22 @@ variable "debian-version-name" {
   description = "Debian base version"
   default     = "bullseye"
 }
+variable "machine-type" {
+  description = "Builder instance tier"
+  default     = "n2-standard-2"
+}
+variable "network" {
+  default = "default"
+}
+variable "tag" {
+  default = "ssh"
+}
+variable "use-iap" {
+  default = false
+}
+variable "omit-external-ip" {
+  default = false
+}
 ############################################################
 # Builder configuration
 ############################################################
@@ -49,9 +65,17 @@ source "googlecompute" "vyos-builder" {
   zone              = var.zone
   source_image      = var.vyos-vanilla-source-image
   communicator      = "ssh"
+  
+  use_iap           = var.use-iap
+  tags              = [var.tag]
+  network           = var.network
+  machine_type      = var.machine-type 
+  omit_external_ip  = var.omit-external-ip
 
   ssh_username      = "vyos"
   ssh_password      = "vyos"
+  ssh_timeout             = "1h"
+
   use_os_login      = false
 
   image_name        = var.image-name

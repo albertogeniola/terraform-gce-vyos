@@ -46,8 +46,14 @@ jobs:
           echo "Should Build: ${{ needs.CheckBuildRequired.outputs.should_build }}"
           echo "Commit Datetime: ${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
           echo "Commit Hash: ${{ needs.CheckBuildRequired.outputs.commit }}"
-      - name: Check out repository code
+      - name: Check out local repository code
         uses: actions/checkout@v3
+      - name: Check out VyOS-Build repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'vyos/vyos-build'
+          ref: ${{ needs.CheckBuildRequired.outputs.commit }}
+          path: './vyos-build'
       - name: Install the dependencies
         run: |
           sudo apt-get update
@@ -55,116 +61,27 @@ jobs:
       - name: Pull docker image
         run: |
           docker pull "vyos/vyos-build:equuleus"
-      - name: Prepare local folders
+      - name: "Patch the make scripts"
         run: |
-          mkdir ./.builder
-          mkdir ./.patches
-      - name: Prepare Build Script
-        run: |
-          cat <<'EOF' >> ./.patches/config.boot.default
-          interfaces {
-              ethernet ens4 {
-                  address dhcp
-              }
-              loopback lo {
-              }
-          }
-          service {
-              ssh {
-                  listen-address 0.0.0.0
-                  port 22
-              }
-          }
-          system {
-              config-management {
-                  commit-revisions 100
-              }
-              conntrack {
-                  modules {
-                      ftp
-                      h323
-                      nfs
-                      pptp
-                      sip
-                      sqlnet
-                      tftp
-                  }
-              }
-              console {
-                  device ttyS0 {
-                      speed 38400
-                  }
-              }
-              host-name vyos-gce
-              login {
-                  user vyos {
-                      authentication {
-                          encrypted-password $6$gf2ShN8QhLqyH$WedSwHWXMYgC/qoM7ibe2XwdZro.A.qsYqMH0P9jf5opselu31ACTUD1bkRTL8S3WeKjoJ1Uu2xOgZXSV9SOr1
-                          plaintext-password ""
-                      }
-                  }
-              }
-              name-server 169.254.169.254
-              name-server 8.8.8.8
-              name-server 8.8.4.4
-              
-              ntp {
-                  server time1.vyos.net {
-                  }
-                  server time2.vyos.net {
-                  }
-                  server time3.vyos.net {
-                  }
-              }
-              syslog {
-                  global {
-                      facility all {
-                          level info
-                      }
-                      facility protocols {
-                          level debug
-                      }
-                  }
-              }
-          }
-          // Warning: Do not remove the following line.
-          // vyos-config-version: "broadcast-relay@1:cluster@1:config-management@1:conntrack@3:conntrack-sync@2:dhcp-relay@2:dhcp-server@6:dhcpv6-server@1:dns-forwarding@3:firewall@5:https@2:interfaces@22:ipoe-server@1:ipsec@5:isis@1:l2tp@3:lldp@1:mdns@1:nat@5:ntp@1:pppoe-server@5:pptp@2:qos@1:quagga@8:rpki@1:salt@1:snmp@2:ssh@2:sstp@3:system@21:vrrp@2:vyos-accel-ppp@2:wanloadbalance@3:webproxy@2:zone-policy@1"
-          // Release version: equuleus
-          EOF
-
-          cat <<'EOF' >> ./.builder/build_script.sh
-          #!/bin/bash
-          git clone -b equuleus --single-branch https://github.com/vyos/vyos-build
-          cd vyos-build
-          git checkout ${{ needs.CheckBuildRequired.outputs.commit }}
-
-          # Configure
-          ./configure --architecture amd64 --build-by "Github Actions" --build-type=release --version equuleus
-
           # Manipulate the image so that we add minimum configuration file for GCE
-          #cp /patches/config.boot.default ./data/live-build-config/includes.chroot/opt/vyatta/etc/config.boot.default
-          cp /patches/config.boot.default ./tools/cloud-init/GCE/config.boot.default
-          cp /patches/*.chroot ./data/live-build-config/hooks/live/*.chroot
-          
-          # Build the ISO and the GCE instance (ISO is required to build the GCE image)
-          sudo make $1
-          EOF
+          cp ./vyos-gce-image/build-patches/tools/cloud-init/GCE/config.boot.default ./vyos-build/tools/cloud-init/GCE/config.boot.default
+          cp -vR ./vyos-gce-image/chroot-patches/* ./vyos-build/data/live-build-config/includes/chroot/
+          cp -vR ./vyos-gce-image/live-hooks-patches/* ./vyos-build/data/live-build-config/hooks/live/
       - name: Build ISO
         run: |
           docker run \
               --rm \
-              -v "$(pwd)":/vyos \
-              -v "$(pwd)/.patches:/patches" \
-              -v "$(pwd)/.builder":/home/vyos_bld/.builder \
+              -v "$(pwd)":/gce-vyos \
+              -v "$(pwd)/vyos-build":/vyos-build \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
-              -w /vyos \
+              -w /vyos-build \
               --privileged \
               --sysctl net.ipv6.conf.lo.disable_ipv6=0 \
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/.builder/build_script.sh" iso
+              bash "./vyos-gce-image/build_script.sh" iso
       - uses: actions/upload-artifact@v3
         with:
           name: ISO
@@ -179,8 +96,6 @@ jobs:
           docker run \
               --rm \
               -v "$(pwd)":/vyos \
-              -v "$(pwd)/.patches:/patches" \
-              -v "$(pwd)/.builder":/home/vyos_bld/.builder \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
               -w /vyos \
@@ -189,7 +104,7 @@ jobs:
               -e GOSU_UID=$(id -u) \
               -e GOSU_GID=$(id -g) \
               "vyos/vyos-build:equuleus" \
-              bash "/home/vyos_bld/.builder/build_script.sh" GCE
+              bash "./vyos-gce-image/build_script.sh" GCE "${{ needs.CheckBuildRequired.outputs.commit }}"
       - uses: actions/upload-artifact@v3
         with:
           name: GCE-IMAGE

@@ -1,0 +1,15 @@
+# Contents of /etc/systemd/system/login_helper.service
+
+[Unit]
+Description=VyOs login helper
+After=network.target
+
+[Service]
+User=vyos
+Group=vyattacfg
+Type=simple
+Restart=always
+ExecStart=/opt/login_helper/login_helper.sh
+
+[Install]
+WantedBy=multi-user.target
