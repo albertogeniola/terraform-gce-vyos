@@ -10,13 +10,15 @@ deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-$
 EOM
 
 # Setup the official repositories
-tee /etc/apt/sources.list.d/debian-${VERSION_CODENAME}.list << EOM
-deb http://deb.debian.org/debian/ ${VERSION_CODENAME} main
-deb-src http://deb.debian.org/debian/ ${VERSION_CODENAME} main
-deb http://security.debian.org/debian-security ${VERSION_CODENAME}-security main
-deb-src http://security.debian.org/debian-security ${VERSION_CODENAME}-security main
-deb http://deb.debian.org/debian/ ${VERSION_CODENAME}-updates main
-deb-src http://deb.debian.org/debian ${VERSION_CODENAME}-updates main
+# Stable is now BULLSEYE, while buster is OLDSTABLE
+REPO_CODENAME=oldstable
+tee /etc/apt/sources.list.d/debian-${REPO_CODENAME}.list << EOM
+deb http://deb.debian.org/debian/ ${REPO_CODENAME} main
+deb-src http://deb.debian.org/debian/ ${REPO_CODENAME} main
+deb http://security.debian.org/debian-security ${REPO_CODENAME}-security main
+deb-src http://security.debian.org/debian-security ${REPO_CODENAME}-security main
+deb http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
+deb-src http://deb.debian.org/debian ${REPO_CODENAME}-updates main
 EOM
 
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
