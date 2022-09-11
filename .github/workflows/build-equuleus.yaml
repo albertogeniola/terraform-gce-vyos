@@ -43,7 +43,7 @@ jobs:
 
   BuildAndRelease:
     needs: CheckBuildRequired
-    if: always() && (needs.CheckBuildRequired.result == 'success' || needs.CheckBuildRequired.result == 'skipped') && needs.CheckBuildRequired.outputs.should_build
+    if: always() && !contains(needs.*.result,'canceled') && needs.CheckBuildRequired.outputs.should_build
     runs-on: ubuntu-latest
     steps:
       - name: Print info
