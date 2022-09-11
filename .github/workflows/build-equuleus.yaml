@@ -42,8 +42,8 @@ jobs:
           echo "Tag Name: ${{ steps.existing_release_id.outputs.tag_name }}"
 
   BuildAndRelease:
-    if: ${{ needs.CheckBuildRequired.outputs.should_build }}
     needs: CheckBuildRequired
+    if: always() && needs.CheckBuildRequired.outputs.should_build
     runs-on: ubuntu-latest
     steps:
       - name: Print info
