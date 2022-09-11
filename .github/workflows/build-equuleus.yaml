@@ -100,7 +100,8 @@ jobs:
         run: |
           docker run \
               --rm \
-              -v "$(pwd)":/vyos \
+              -v "$(pwd)":/gce-vyos \
+              -v "$(pwd)/vyos-build":/vyos-build \
               -e VYOS_VERSION="equuleus" \
               -e BUILD_BY="Github Action" \
               -w /vyos \
