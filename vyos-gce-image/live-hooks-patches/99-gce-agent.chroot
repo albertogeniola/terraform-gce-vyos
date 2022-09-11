@@ -27,7 +27,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install apt-transport-https ca-certifi
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 
 # Install compute agent & cloud-sdk
-apt update
+apt-get update
 DEBIAN_FRONTEND=noninteractive apt install -y google-cloud-packages-archive-keyring
 DEBIAN_FRONTEND=noninteractive apt install -y google-compute-engine google-osconfig-agent google-cloud-sdk
 
@@ -36,7 +36,7 @@ curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 bash add-google-cloud-ops-agent-repo.sh --also-install --uninstall-standalone-logging-agent --uninstall-standalone-monitoring-agent
 
 # Install python3 pip, we'll need this later for the installation of requirements
-DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip python3-venv
+DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip python3-venv build-essential python3-dev
 
 # Align missing permissions
 chown -vR vyos /opt/login_helper
