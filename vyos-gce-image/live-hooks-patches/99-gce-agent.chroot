@@ -1,0 +1,57 @@
+#!/bin/bash
+echo "Live hook executed" > /home/executed.txt
+
+# Install the Google Ops Agent
+REPO_CODENAME=buster
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+tee /etc/apt/sources.list.d/google-cloud.list << EOM
+deb http://packages.cloud.google.com/apt google-compute-engine-${REPO_CODENAME}-stable main
+deb http://packages.cloud.google.com/apt google-cloud-packages-archive-keyring-${REPO_CODENAME} main
+EOM
+
+#deb http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
+#deb-src http://security.debian.org/debian-security/ ${REPO_CODENAME}-security main
+
+tee /etc/apt/sources.list.d/debian-${REPO_CODENAME}.list << EOM
+deb http://deb.debian.org/debian/ ${REPO_CODENAME} main
+deb-src http://deb.debian.org/debian/ ${REPO_CODENAME} main
+#deb http://security.debian.org/debian-security/ ${REPO_CODENAME}/security main
+#deb-src http://security.debian.org/debian-security/ ${REPO_CODENAME}/security main
+deb http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
+deb-src http://deb.debian.org/debian/ ${REPO_CODENAME}-updates main
+EOM
+
+
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+DEBIAN_FRONTEND=noninteractive apt-get -y install apt-transport-https ca-certificates gnupg
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+
+# Install compute agent & cloud-sdk
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt install -y google-cloud-packages-archive-keyring
+DEBIAN_FRONTEND=noninteractive apt install -y google-compute-engine google-osconfig-agent google-cloud-sdk
+
+# Install OPS agent
+curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
+bash add-google-cloud-ops-agent-repo.sh --also-install --uninstall-standalone-logging-agent --uninstall-standalone-monitoring-agent
+
+# Install python3 pip, we'll need this later for the installation of requirements
+DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip python3-venv build-essential python3-dev
+
+# Align missing permissions
+chown -vR vyos /opt/login_helper
+chown -vR vyos /var/run/login_helper
+chown -vR vyos /opt/conf_reloader
+chown -vR vyos /var/run/conf_reloader
+chmod +x /opt/login_helper/login_helper.sh
+chmod +x /opt/conf_reloader/conf_reloader.sh
+chmod +x /opt/conf_reloader/command_helper.sh
+
+python3 -m venv /opt/conf_reloader/.venv
+/opt/conf_reloader/.venv/bin/pip3 install -r /opt/conf_reloader/requirements.txt
+
+# Install services
+systemctl daemon-reload
+systemctl enable login_helper.service
+systemctl enable conf_reloader.service
+
