@@ -51,7 +51,6 @@ sudo /opt/gce_helper/.venv/bin/python -m pip install -r /opt/gce_helper/requirem
 # Install services
 sudo systemctl daemon-reload
 sudo systemctl enable conf_reloader.service
-# For now, we install the login_helper service but we don't enable it: we rely on the GCE agent.
 sudo systemctl enable login_helper.service
 
 # Configure the agent to automatically set users to vyattacfg group
