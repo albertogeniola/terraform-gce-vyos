@@ -7,7 +7,7 @@ jobs:
   CheckBuildRequired:
     runs-on: ubuntu-latest
     outputs:
-      should_build: ${{ steps.existing_release_id.outputs.id == null }}
+      should_build: ${{ steps.calculate_outputs.outputs.SHOULD_BUILD }}
       commit: ${{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
       commit_datetime: ${{ steps.check_commit.outputs.COMMIT_DATETIME}}
     steps:
@@ -35,15 +35,38 @@ jobs:
         with:
           tag: ${{ steps.check_commit.outputs.COMMIT_DATETIME }}
           doNotFailIfNotFound: true
-      - name: Print outputs
+      - name: Check out local repository code
+        uses: actions/checkout@v3
+      - name: Calculate outputs
+        id: calculate_outputs
         run: |
-          echo "Release ID: ${{ steps.existing_release_id.outputs.id }}"
-          echo "Release ID is NULL?: ${{ steps.existing_release_id.outputs.id == null }}"
-          echo "Tag Name: ${{ steps.existing_release_id.outputs.tag_name }}"
+          LOCAL_COMMIT_SHA=$(git rev-parse HEAD)
+          git fetch --tags
+          git checkout refs/tags/${{steps.existing_release_id.outputs.tag_name}}
+          LATEST_RELEASE_TAG_SHA=$(git rev-parse HEAD)
+          EXISTING_RELEASE_ID="${{steps.existing_release_id.outputs.id}}"
+          if [[ $EXISTING_RELEASE_ID == "" ]]; then
+            EXISTING_RELEASE_EMPTY="true"
+          else
+            EXISTING_RELEASE_EMPTY="false"
+          fi
+          
+          echo "Release ID: $EXISTING_RELEASE_ID"
+          echo "Release ID is NULL?: $EXISTING_RELEASE_EMPTY"
+          echo "Local run commit SHA: $LOCAL_COMMIT_SHA"
+          echo "Latest release tag Name: ${{steps.existing_release_id.outputs.tag_name}}"
+          echo "Latest release commit SHA: $LATEST_RELEASE_TAG_SHA"
+          
+          if [[ $EXISTING_RELEASE_EMPTY == "true" ||  $LOCAL_COMMIT_SHA != $LATEST_RELEASE_TAG_SHA ]]; then
+            SHOULD_BUILD="true"
+          else
+            SHOULD_BUILD="false"
+          fi
+          echo "Should BUILD: $SHOULD_BUILD"
+          echo "::set-output name=SHOULD_BUILD::$SHOULD_BUILD"
 
   BuildAndRelease:
     needs: CheckBuildRequired
-    if: always() && !contains(needs.*.result,'canceled') && needs.CheckBuildRequired.outputs.should_build
     runs-on: ubuntu-latest
     steps:
       - name: Print info
@@ -52,27 +75,33 @@ jobs:
           echo "Commit Datetime: ${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
           echo "Commit Hash: ${{ needs.CheckBuildRequired.outputs.commit }}"
       - name: Check out local repository code
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         uses: actions/checkout@v3
       - name: Check out VyOS-Build repository
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         uses: actions/checkout@v3
         with:
           repository: 'vyos/vyos-build'
           ref: ${{ needs.CheckBuildRequired.outputs.commit }}
           path: './vyos-build'
       - name: Install the dependencies
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         run: |
           sudo apt-get update
           sudo apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
       - name: Pull docker image
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         run: |
           docker pull "vyos/vyos-build:equuleus"
       - name: "Patch the make scripts"
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         run: |
           # Manipulate the image so that we add minimum configuration file for GCE
           cp ./vyos-gce-image/build-patches/tools/cloud-init/GCE/config.boot.default ./vyos-build/tools/cloud-init/GCE/config.boot.default
           cp -vR ./vyos-gce-image/chroot-patches/* ./vyos-build/data/live-build-config/includes.chroot/
           cp -vR ./vyos-gce-image/live-hooks-patches/* ./vyos-build/data/live-build-config/hooks/live/
       - name: Build ISO
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         run: |
           docker run \
               --rm \
@@ -88,14 +117,17 @@ jobs:
               "vyos/vyos-build:equuleus" \
               bash "/gce-vyos/vyos-gce-image/build_script.sh" iso
       - uses: actions/upload-artifact@v3
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         with:
           name: ISO
           path: |
             ./vyos-build/build/*.iso
       - name: Move ISO
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         run: |
           mv ./vyos-build/build/*.iso ./
       - id: buildgce
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         name: Build GCE Image
         run: |
           docker run \
@@ -112,14 +144,17 @@ jobs:
               "vyos/vyos-build:equuleus" \
               bash "/gce-vyos/vyos-gce-image/build_script.sh" GCE
       - uses: actions/upload-artifact@v3
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         with:
           name: GCE-IMAGE
           path: ./vyos-build/build/*.tar.gz
       - name: Move GCE image
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         run: |
           SOURCE=$(ls ./vyos-build/build/VyOS-*.tar.gz)
           mv "$SOURCE" ./vyos-equuleus-gce-image.tar.gz
       - uses: "marvinpinto/action-automatic-releases@latest"
+        if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "${{ needs.CheckBuildRequired.outputs.commit_datetime }}"

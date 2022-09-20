@@ -9,6 +9,7 @@ service {
     ssh {
         listen-address 0.0.0.0
         port 22
+        disable-password-authentication
     }
 }
 system {
@@ -33,6 +34,9 @@ system {
     }
     host-name vyos-gce
     login {
+        banner {
+            post-login "Welcome to VyOs\n=========================================================================\nPlease note the following:\n    * This image is integrated with Google Ops Agent and supports metadata\nssh-keys login;\n    * You can still manage vyos configuration using the Serial Console,\nlogging in as vyos credentials: vyos/vyos;\n    * Note: vyos ssh plaintext/password is disabled.\n\nBuilt using https://github.com/albertogeniola/terraform-gce-vyos\n========================================================================="
+        }
         user vyos {
             authentication {
                 encrypted-password $6$gf2ShN8QhLqyH$WedSwHWXMYgC/qoM7ibe2XwdZro.A.qsYqMH0P9jf5opselu31ACTUD1bkRTL8S3WeKjoJ1Uu2xOgZXSV9SOr1
@@ -50,6 +54,11 @@ system {
         server time2.vyos.net {
         }
         server time3.vyos.net {
+        }
+    }
+    static-host-mapping {
+        host-name metadata.google.internal {
+            inet 169.254.169.254
         }
     }
     syslog {

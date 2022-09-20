@@ -1,6 +1,8 @@
 /.idea/
 /.venv/
 
+/vyos-gce-image/chroot-patches/opt/gce_helper/.venv
+
 # Local .terraform directories
 **/.terraform/*
 

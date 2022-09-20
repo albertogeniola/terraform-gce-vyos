@@ -36,22 +36,28 @@ curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 bash add-google-cloud-ops-agent-repo.sh --also-install --uninstall-standalone-logging-agent --uninstall-standalone-monitoring-agent
 
 # Install python3 pip, we'll need this later for the installation of requirements
-DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip python3-venv build-essential python3-dev
+DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip python3-venv build-essential python3-dev 
 
 # Align missing permissions
-chown -vR vyos /opt/login_helper
-chown -vR vyos /var/run/login_helper
-chown -vR vyos /opt/conf_reloader
-chown -vR vyos /var/run/conf_reloader
-chmod +x /opt/login_helper/login_helper.sh
-chmod +x /opt/conf_reloader/conf_reloader.sh
-chmod +x /opt/conf_reloader/command_helper.sh
+chown -vR vyos /opt/gce_helper
+chown -vR vyos /var/run/gce_helper
+chmod +x /opt/gce_helper/command_helper.sh
 
-python3 -m venv /opt/conf_reloader/.venv
-/opt/conf_reloader/.venv/bin/pip3 install -r /opt/conf_reloader/requirements.txt
+python3 -m venv /opt/gce_helper/.venv
+sudo /opt/gce_helper/.venv/bin/python -m pip install pip --upgrade
+sudo /opt/gce_helper/.venv/bin/python -m pip install wheel
+sudo /opt/gce_helper/.venv/bin/python -m pip install -r /opt/gce_helper/requirements.txt
 
 # Install services
-systemctl daemon-reload
-systemctl enable login_helper.service
-systemctl enable conf_reloader.service
+sudo systemctl daemon-reload
+sudo systemctl enable conf_reloader.service
+# For now, we install the login_helper service but we don't enable it: we rely on the GCE agent.
+sudo systemctl enable login_helper.service
 
+# Configure the agent to automatically set users to vyattacfg group
+sudo cat /etc/default/instance_configs.cfg | sudo sed -e 's/groups = /groups = vyattacfg,/'>/tmp/instance_configs.cfg
+sudo cp /tmp/instance_configs.cfg /etc/default/instance_configs.cfg
+
+# For inspecting logs:
+# journalctl -u login_helper.service
+# journalctl -u conf_reloader.service
