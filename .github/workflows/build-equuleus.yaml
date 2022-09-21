@@ -37,7 +37,7 @@ jobs:
         with:
           tag: ${{ steps.check_commit.outputs.COMMIT_DATETIME }}
           doNotFailIfNotFound: true
-          prerelease: ${{needs.CheckBuildRequired.outputs.branch_name != "main"}}
+          prerelease: ${{needs.CheckBuildRequired.outputs.branch_name != 'main'}}
       - name: Check out local repository code
         uses: actions/checkout@v3
       - name: Calculate outputs
@@ -161,7 +161,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
-          prerelease: ${{needs.CheckBuildRequired.outputs.branch_name != "main"}}
+          prerelease: ${{needs.CheckBuildRequired.outputs.branch_name != 'main'}}
           title: "Build commit ${{ needs.CheckBuildRequired.outputs.commit }} on ${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
           files: |
             *.iso
