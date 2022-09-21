@@ -84,7 +84,7 @@ def get_local_api_client(client_id:str) -> VyOsAPIClient:
     """Builds a new API client with appropriate API keys to be used locally"""
     client = _api_clients.get(client_id)
     if client is None:
-        client = _setup_client(api_key=client_id)
+        client = _setup_client(key_name=client_id)
         _api_clients[client_id] = client
     return client
         
