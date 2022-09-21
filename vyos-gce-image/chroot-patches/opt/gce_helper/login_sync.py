@@ -6,13 +6,13 @@ import json
 import hashlib
 from utils import get_metadata, add_user_to_group
 from typing import List, Optional
-from vyos_api import api_client
+from vyos_api import get_local_api_client
 from requests.exceptions import ReadTimeout
 from constants import LOGIN_SYNC_METADATA_TIMEOUT, CFG_GROUP
 from datetime import datetime
 
 
-
+_CLIENT_ID = __name__
 logging.basicConfig(format='login_sync:%(levelname)s:%(message)s', level=logging.INFO)
 l = logging.getLogger(__name__)
 
@@ -149,6 +149,8 @@ def main() -> None:
     # Make sure OSLogin is not set, as VyOS won't work with users managed by OSLogin.
     if is_oslogin_enabled():
         l.error("This instance is being managed via OS-Login. This is not supported at the moment. Please unset os-login from instance metadata or set it to FALSE.")
+
+    api_client = get_local_api_client(_CLIENT_ID)
 
     while True:
         # Fetch metadata and wait for metadata changes
