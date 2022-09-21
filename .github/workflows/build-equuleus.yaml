@@ -1,8 +1,5 @@
 name: Build Equuleus
 on: [push]
-#  push:
-#    branches:
-#      - equuleus
 jobs:
   CheckBuildRequired:
     runs-on: ubuntu-latest
@@ -10,7 +7,12 @@ jobs:
       should_build: ${{ steps.calculate_outputs.outputs.SHOULD_BUILD }}
       commit: ${{ steps.check_commit.outputs.EQUULEUS_COMMIT }}
       commit_datetime: ${{ steps.check_commit.outputs.COMMIT_DATETIME}}
+      branch_name: ${{ steps.extract_branch.outputs.BRANCH_NAME}}
     steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output BRANCH_NAME=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - name: Get vyos-build info
         id: check_commit
         run: |
@@ -35,6 +37,7 @@ jobs:
         with:
           tag: ${{ steps.check_commit.outputs.COMMIT_DATETIME }}
           doNotFailIfNotFound: true
+          prerelease: ${{needs.CheckBuildRequired.outputs.branch_name != "main"}}
       - name: Check out local repository code
         uses: actions/checkout@v3
       - name: Calculate outputs
@@ -158,7 +161,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
-          prerelease: true
+          prerelease: ${{needs.CheckBuildRequired.outputs.branch_name != "main"}}
           title: "Build commit ${{ needs.CheckBuildRequired.outputs.commit }} on ${{ needs.CheckBuildRequired.outputs.commit_datetime }}"
           files: |
             *.iso
