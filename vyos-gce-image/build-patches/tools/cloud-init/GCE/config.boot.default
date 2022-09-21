@@ -43,6 +43,8 @@ system {
                 plaintext-password ""
             }
         }
+        user admin {
+        }
     }
     name-server 169.254.169.254
     name-server 8.8.8.8
