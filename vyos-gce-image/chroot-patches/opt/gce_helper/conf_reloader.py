@@ -5,15 +5,20 @@ import requests
 from google.cloud import pubsub_v1
 from configuration import configuration
 from utils import parse_gce_notification, download_gcs_file
-from vyos_api import api_client
+from vyos_api import get_local_api_client
 
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+_CLIENT_ID = __name__
+
+
+logging.basicConfig(format='conf_reloader:%(levelname)s:%(message)s', level=logging.INFO)
 l = logging.getLogger(__name__)
 
 
 def callback(message: pubsub_v1.subscriber.message.Message) -> None:
     """Message handler logic."""
+    api_client = get_local_api_client(_CLIENT_ID)
+
     # TODO: handle re-transmissions/duplicates
     l.debug("New pubsub message received: %s", str(message))
 

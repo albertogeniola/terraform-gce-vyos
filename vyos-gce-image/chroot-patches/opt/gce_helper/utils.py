@@ -1,16 +1,19 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict
 from google.cloud import storage
-
+import logging
 import requests
+import os
 from typing.io import TextIO
 
 _METADATA_HOST="http://metadata.google.internal"
+l = logging.getLogger(__name__)
 
 
 def get_metadata(metadata_path: str,
                  alt: str = None,
                  wait_for_changes: Optional[bool] = None,
-                 timeout_sec: Optional[int] = None):
+                 timeout_sec: Optional[int] = None,
+                 additional_params: Optional[Dict] = None):
     """Fetches metadata from metadata server"""
     params = {}
     if wait_for_changes is not None:
@@ -19,6 +22,8 @@ def get_metadata(metadata_path: str,
         params["timeout_sec"] = timeout_sec
     if alt is not None:
         params["alt"] = alt
+    if additional_params is not None:
+        params.update(additional_params)
     resp = requests.get(url=f"{_METADATA_HOST}{metadata_path}",
                         params=params,
                         headers={"Metadata-Flavor": "Google"},
@@ -48,3 +53,10 @@ def parse_gce_notification(message) -> Tuple[str, str, str]:
         raise ValueError(f"Invalid pubsub message: {message}. No object_id was found within its attributes.")
 
     return event_type, bucket_id, object_id
+
+
+def add_user_to_group(user:str, group:str) -> bool:
+    """Adds user to group and returns True if the operation succeeded, False otherwise."""
+    l.debug("Adding user %s to group %s", user, group)
+    retcode = os.system(f"sudo adduser {user} {group}")
+    return retcode == 0

@@ -1,16 +1,20 @@
-# Contents of /etc/systemd/system/conf_reloader.service
+# Contents of /etc/systemd/system/gce_helper.service
 
 [Unit]
 Description=VyOs configuration reloader
-After=network.target
+Wants=network-online.target
+After=network-online.target
+#After=cloud-init.target
+After=vyos-http-api.target
 
 [Service]
-User=vyos
+User=root
 Group=vyattacfg
 Type=simple
 Restart=always
-ExecStart=/opt/conf_reloader/.venv/bin/python /opt/conf_reloader/main.py
-WorkingDirectory=/opt/conf_reloader
+RestartSec=30s
+ExecStart=/opt/gce_helper/.venv/bin/python /opt/gce_helper/conf_reloader.py
+WorkingDirectory=/opt/gce_helper
 
 [Install]
 WantedBy=multi-user.target
