@@ -9,24 +9,22 @@ it is not updated and does not come with Google Compute agent nor Google Ops Age
 This module aims at enabling IaC projects to take advantage of VyOS instances with ease, following a more IaC-oriented approach.
 
 ## Features
-This module achieves two major objectives:
+This module achieves the following major objectives:
 - Provides a way for deploying a VyOS Equuleus 1.3 GCE Image on GCP
 - Enables the VyOS instance to update its configuration using Cloud Storage and Pub/Sub notifications
 - Enables users connecting via IAP/GCLOUD ssh to administer the VyOS instance with the built-in command line
 
-## Imge Prerequisites
-This Terraform module spawns a GCE instance running a special GCE Image, which needs to be referenced in the module.
+## Image Prerequisites
+This Terraform module requires a custom GCE Image to be built or imported into the GCP
+project where the VyOS router will reside. You can either build and customize that image yourself (but chances are you landed on this page because you don't want to do so), 
+or you can simply import the GCE image (vyos-equuleus-gce-image.tar.gz) built on this repository, [available here](https://github.com/albertogeniola/terraform-gce-vyos/releases).
 
-You should create the __VyOS GCE image__ on the GCP project where to deploy this module.
-You can either build that image yourself and install the necessary components to make the image work on GCE instances, or you can
-simply import the GCE image (vyos-equuleus-gce-image.tar.gz) built on this repository, [available here](https://github.com/albertogeniola/terraform-gce-vyos/releases).
+To get the image ready by using the one built on this repository, simply download the __.ta.gz__ tarball and update it into a GCS bucket. Then, create a new GCE image starting 
+from the uploaded file. More info about this process can be found on the [official GCP documentation](https://cloud.google.com/compute/docs/images/create-custom#create_image).
 
-To create the GCE image starting from that tarball, simply update it into a GCS bucket and create a new GCE image starting from the uploaded file. 
-More info about this process can be found on the [official GCP documentation](https://cloud.google.com/compute/docs/images/create-custom#create_image).
-
-### Building VyOS GCE Image
-This image is built via the build scripts provided by the VyOS team and enriched with the necessary configurations and scripts
-useful to run on the GCP environment. At the time of writing, the GCE image on this repository is built as follows:
+### Building VyOS GCE Image by your own
+The GCE image is built via the build scripts provided by the VyOS team and enriched with the necessary configurations and scripts
+needed to run on the GCP environment. At the time of writing, the GCE image on this repository is built as follows:
 1. Build the VyOS Equuleus 1.3 ISO, using the official build-script;
 1. Build the base VyOS Equuleus 1.3 GCE Image, using the official build-script;
 1. Configure and patch the image to run correctly on GCE:
@@ -50,7 +48,7 @@ _Note_: this module won't take care of enabling the necessary APIs. It is develo
 
 
 # Limitations
-Some organizational policy might require an exception for this module to work.
+Some organizational policies might require an exception for this module to work.
 For instance, the `constraints/storage.uniformBucketLevelAccess` constraint should not apply to the bucket where the configuration is held, as the current
 version of the module works with ACLs on single objects.
 If you plan to use VyOS instance with a public IP assigned, you should make sure that the policy `constraints/compute.vmExternalIpAccess` does allow that.
