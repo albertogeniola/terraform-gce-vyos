@@ -33,6 +33,7 @@ data "google_iam_policy" "subscription_subscriber" {
 }
 
 resource "google_pubsub_subscription_iam_policy" "instance_subscriber" {
-  subscription = google_pubsub_subscription.vyos_instance_subscription.name
-  policy_data  = data.google_iam_policy.subscription_subscriber.policy_data
+  project       = var.project_id
+  subscription  = google_pubsub_subscription.vyos_instance_subscription.name
+  policy_data   = data.google_iam_policy.subscription_subscriber.policy_data
 }

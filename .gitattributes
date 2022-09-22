@@ -6,8 +6,6 @@
 *.yaml text eol=lf
 *.yml text eol=lf
 
-# Handle motd as linefeed
-images/vyos-gce-builder/resources/etc/motd text eol=lf
 
 
 

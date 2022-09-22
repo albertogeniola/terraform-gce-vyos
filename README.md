@@ -12,17 +12,19 @@ This module aims at enabling IaC projects to take advantage of VyOS instances wi
 This module achieves two major objectives:
 - Provides a way for deploying a VyOS Equuleus 1.3 GCE Image on GCP
 - Enables the VyOS instance to update its configuration using Cloud Storage and Pub/Sub notifications
+- Enables users connecting via IAP/GCLOUD ssh to administer the VyOS instance with the built-in command line
 
-## Prerequisites
+## Imge Prerequisites
 This Terraform module spawns a GCE instance running a special GCE Image, which needs to be referenced in the module.
 
 You should create the __VyOS GCE image__ on the GCP project where to deploy this module.
 You can either build that image yourself and install the necessary components to make the image work on GCE instances, or you can
 simply import the GCE image (vyos-equuleus-gce-image.tar.gz) built on this repository, [available here](https://github.com/albertogeniola/terraform-gce-vyos/releases).
+
 To create the GCE image starting from that tarball, simply update it into a GCS bucket and create a new GCE image starting from the uploaded file. 
 More info about this process can be found on the [official GCP documentation](https://cloud.google.com/compute/docs/images/create-custom#create_image).
 
-### GCE Image components
+### Building VyOS GCE Image
 This image is built via the build scripts provided by the VyOS team and enriched with the necessary configurations and scripts
 useful to run on the GCP environment. At the time of writing, the GCE image on this repository is built as follows:
 1. Build the VyOS Equuleus 1.3 ISO, using the official build-script;
@@ -35,33 +37,33 @@ useful to run on the GCP environment. At the time of writing, the GCE image on t
 1. Install the Configuration Reloader service to automatically fetch the configuration from GCS
 1. Install the Login Helper service to handle SSH users login via VyOS
 
-Please note that covering the build phase of the image is out of the scope of this document. 
-Also, pleae note that a standard VyOS image does not include the Configuration Reloader and Login Helper services.
-If you plan to build the VyOS image by yourself, please inject the repository contents of `vyos-gce-image/chroot-patches/opt/gce_helper` 
-and `vyos-gce-image/chroot-patches/etc/systemd/system` respectively to `/opt/gce_helper` and `/etc/systemd/system` (on the target image).
-Also, make sure to override the default vyos `config.boot.default` file with the one provided in this repository.
-Eventually, make sure to install the GCE agent and the ops agent. You can see how this is done in this repository by lookig at the `99-gce-agent.chroot`
-shell script.
+
+_Note_: this module won't take care of enabling the necessary APIs. It is developer's responsibility to enable them in the root module.
+
+> __Please note that covering the build phase of the image is out of the scope of this document.__
+> 
+> That being said, if you plan to build the VyOS image by yourself, please inject the repository contents of `vyos-gce-image/chroot-patches/opt/gce_helper` 
+> and `vyos-gce-image/chroot-patches/etc/systemd/system` respectively to `/opt/gce_helper` and `/etc/systemd/system` (on the target image).
+> Also, make sure to override the default vyos `config.boot.default` file with the one provided in this repository.
+> Eventually, make sure to install the GCE agent and the ops agent. You can see how this is done in this repository by lookig at the `99-gce-agent.chroot`
+> shell script.
+
+
+# Limitations
+Some organizational policy might require an exception for this module to work.
+For instance, the `constraints/storage.uniformBucketLevelAccess` constraint should not apply to the bucket where the configuration is held, as the current
+version of the module works with ACLs on single objects.
+If you plan to use VyOS instance with a public IP assigned, you should make sure that the policy `constraints/compute.vmExternalIpAccess` does allow that.
+
+Moreover, at the time of writing, the provided GCE VyOS image does not comply with shielded image requirements. Therefore the `constraints/compute.requireShieldedVm`
+org policy should allow an exception for the VyOS intance.
 
 ## Usage
 TBD
 
-### Image building notes
-TBD
-```bash
-packer init builder.pkr.hcl
-```
 
-```bash
-packer build -var "zone=europe-west3-c" -var "project-id=devops-dev-264808" -var "artifact-bucket=gs://devops-dev-264808-vyos-artifacts" builder.pkr.hcl
-```
-
-
-## Requirements
-
-.TBD. (provider, packer, gcp project with billing)
-
-## Inputs
+## Module reference
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|

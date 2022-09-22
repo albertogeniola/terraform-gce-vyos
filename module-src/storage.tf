@@ -1,9 +1,5 @@
-resource "google_storage_bucket" "artifact_bucket" {
-  name          = local.artifact_bucket
-  location      = var.gcp_region
-}
-
 resource "google_storage_bucket" "conf_file_bucket" {
+  project       = var.project_id
   name          = local.conf_bucket
   location      = var.gcp_region
 }
