@@ -50,14 +50,18 @@ variable "instance_vyos_image_region" {
 
 variable "networks_configuration" {
   description = "Instance networking configuration."
-  type = list(object({
+  type = map(object({
+    assign_external_ip=bool,
+    static_external_ip=string,
+    create_iap_ssh_firewall_rule=bool,
+    network_project_id=string,
     network=string,
     subnetwork=string,
     network_ip=string,
-    access_config=object({
-      nat_ip=string,
-      public_ptr_domain_name=string,
-      network_tier=string
-    })
   }))
+}
+
+variable "enable_serial_port_connection" {
+  description = "When true, allows the connection via the serial port"
+  default     = false
 }

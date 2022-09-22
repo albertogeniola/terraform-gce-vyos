@@ -55,8 +55,8 @@ For instance, the `constraints/storage.uniformBucketLevelAccess` constraint shou
 version of the module works with ACLs on single objects.
 If you plan to use VyOS instance with a public IP assigned, you should make sure that the policy `constraints/compute.vmExternalIpAccess` does allow that.
 
-Moreover, at the time of writing, the provided GCE VyOS image does not comply with shielded image requirements. Therefore the `constraints/compute.requireShieldedVm`
-org policy should allow an exception for the VyOS intance.
+Moreover, at the time of writing, the provided GCE VyOS image does not comply with shielded image requirements nor supports OS-LOGIN. 
+Therefore `constraints/compute.requireShieldedVm` and `constraints/compute.requireOsLogin` org policies should allow an exception for the VyOS intance.
 
 ## Usage
 TBD

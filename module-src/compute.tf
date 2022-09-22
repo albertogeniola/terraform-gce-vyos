@@ -13,16 +13,18 @@ resource "google_compute_instance" "vyos" {
   }
 
   dynamic "network_interface" {
-    for_each = toset(var.networks_configuration)
+    for_each = var.networks_configuration
     content {
       network     = network_interface.value.network
       subnetwork  = network_interface.value.subnetwork
       network_ip  = network_interface.value.network_ip
 
-      access_config {
-        nat_ip = network_interface.value.access_config.nat_ip
-        public_ptr_domain_name = network_interface.value.access_config.public_ptr_domain_name
-        network_tier = network_interface.value.access_config.network_tier
+      dynamic "access_config" {
+        for_each = network_interface.value.assign_external_ip ? {1=1} : {}
+        content {
+          nat_ip = network_interface.value.static_external_ip
+          network_tier = "PREMIUM"
+        }
       }
     }
   }
@@ -34,6 +36,8 @@ resource "google_compute_instance" "vyos" {
 
   metadata = {
     "pubsub-subscription" = google_pubsub_subscription.vyos_instance_subscription.name
+    "serial-port-enable" = upper(var.enable_serial_port_connection)
+    "enable-oslogin" = "FALSE"
   }
 
   depends_on = [
