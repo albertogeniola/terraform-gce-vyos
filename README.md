@@ -67,34 +67,46 @@ Refer to the `example` folder for some quick examples on how to use this module.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.37.0 |
-
-### Modules
-
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_vyos_instance"></a> [vyos\_instance](#module\_vyos\_instance) | ../../module-src | n/a |
+| <a name="provider_google"></a> [google](#provider\_google) | n/a |
 
 ### Resources
 
 | Name | Type |
 |------|------|
-| [google_compute_network.vyos_external_vpc](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network) | resource |
-| [google_compute_network.vyos_internal_vpc](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network) | resource |
-| [google_compute_subnetwork.vyos_external_subnet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) | resource |
-| [google_compute_subnetwork.vyos_internal_subnet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) | resource |
+| [google_compute_firewall.allow_ssh_iap](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
+| [google_compute_instance.vyos](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) | resource |
+| [google_project_iam_member.sa_log_writer](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_iam_member.sa_metric_writer](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_project_service.project_services](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_service) | resource |
+| [google_pubsub_subscription.vyos_instance_subscription](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_subscription) | resource |
+| [google_pubsub_subscription_iam_policy.instance_subscriber](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_subscription_iam_policy) | resource |
+| [google_pubsub_topic.configuration_update_topic](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic) | resource |
+| [google_pubsub_topic_iam_member.pubsub_notification_event](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic_iam_member) | resource |
+| [google_service_account.vyos_compute_sa](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
+| [google_storage_bucket.conf_file_bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) | resource |
+| [google_storage_bucket_iam_member.instance_sa_bucket_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
+| [google_storage_bucket_object.conf_file_object](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_object) | resource |
+| [google_storage_notification.configuration_update](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_notification) | resource |
+| [google_iam_policy.subscription_subscriber](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy) | data source |
+| [google_storage_project_service_account.gcs_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/storage_project_service_account) | data source |
 
 ### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | n/a | `any` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `any` | n/a | yes |
-| <a name="input_zone"></a> [zone](#input\_zone) | n/a | `any` | n/a | yes |
-
-### Outputs
-
-No outputs.
+| <a name="input_configuration_bucket_name"></a> [configuration\_bucket\_name](#input\_configuration\_bucket\_name) | Bucket name where to store VyOs instance configuration file | `any` | `null` | no |
+| <a name="input_configuration_bucket_path"></a> [configuration\_bucket\_path](#input\_configuration\_bucket\_path) | GCS object path where to store VyOs instance configuration file | `any` | `null` | no |
+| <a name="input_enable_serial_port_connection"></a> [enable\_serial\_port\_connection](#input\_enable\_serial\_port\_connection) | When true, allows the connection via the serial port | `bool` | `false` | no |
+| <a name="input_gcp_region"></a> [gcp\_region](#input\_gcp\_region) | Default GCP region where to spawn resources | `any` | n/a | yes |
+| <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | Name to assign to the VyOs instance | `string` | `"vyos"` | no |
+| <a name="input_instance_tags"></a> [instance\_tags](#input\_instance\_tags) | Tags to assign to the vyos instance | `list` | <pre>[<br>  "vyos"<br>]</pre> | no |
+| <a name="input_instance_tier"></a> [instance\_tier](#input\_instance\_tier) | Machine tier for the VyOs instance | `string` | `"e2-small"` | no |
+| <a name="input_instance_vyos_image_name"></a> [instance\_vyos\_image\_name](#input\_instance\_vyos\_image\_name) | Instance image name | `any` | n/a | yes |
+| <a name="input_instance_vyos_image_region"></a> [instance\_vyos\_image\_region](#input\_instance\_vyos\_image\_region) | Instance image region | `string` | `"EU"` | no |
+| <a name="input_instance_zone"></a> [instance\_zone](#input\_instance\_zone) | GCP Zone where to spawn the VyOs instance | `any` | n/a | yes |
+| <a name="input_networks_configuration"></a> [networks\_configuration](#input\_networks\_configuration) | Instance networking configuration. | <pre>map(object({<br>    assign_external_ip=bool,<br>    static_external_ip=string,<br>    create_iap_ssh_firewall_rule=bool,<br>    network_project_id=string,<br>    network=string,<br>    subnetwork=string,<br>    network_ip=string,<br>  }))</pre> | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Google project id where to spawn the VyOs instance | `any` | n/a | yes |
+| <a name="input_vyos_configuration_content"></a> [vyos\_configuration\_content](#input\_vyos\_configuration\_content) | Contents of the VyOs configuration to apply to the target instance | `any` | n/a | yes |
 
 ## Licensing notes
 This module is provided as is, with absolutely no warranty.
