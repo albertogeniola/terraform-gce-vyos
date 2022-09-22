@@ -59,33 +59,42 @@ Moreover, at the time of writing, the provided GCE VyOS image does not comply wi
 Therefore `constraints/compute.requireShieldedVm` and `constraints/compute.requireOsLogin` org policies should allow an exception for the VyOS intance.
 
 ## Usage
-TBD
+Refer to the `example` folder for some quick examples on how to use this module.
 
 
 ## Module reference
+### Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_google"></a> [google](#provider\_google) | 4.37.0 |
+
+### Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_vyos_instance"></a> [vyos\_instance](#module\_vyos\_instance) | ../../module-src | n/a |
+
+### Resources
+
+| Name | Type |
+|------|------|
+| [google_compute_network.vyos_external_vpc](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network) | resource |
+| [google_compute_network.vyos_internal_vpc](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network) | resource |
+| [google_compute_subnetwork.vyos_external_subnet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) | resource |
+| [google_compute_subnetwork.vyos_internal_subnet](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork) | resource |
+
 ### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_artifact_bucket_name"></a> [artifact\_bucket\_name](#input\_artifact\_bucket\_name) | Bucket used as artifact scratchpad to build the VyOs image | `any` | `null` | no |
-| <a name="input_build_vyos_image"></a> [build\_vyos\_image](#input\_build\_vyos\_image) | When set to true, the module will build the vyos image with packer and name it as `instance_vyos_image_name`.<br>In case you have built the image manually, set this flag to false and reference the vyos image using the<br>`instance_vyos_image_name` variable." | `any` | n/a | yes |
-| <a name="input_configuration_bucket_name"></a> [configuration\_bucket\_name](#input\_configuration\_bucket\_name) | Bucket name where to store VyOs instance configuration file | `any` | `null` | no |
-| <a name="input_configuration_bucket_path"></a> [configuration\_bucket\_path](#input\_configuration\_bucket\_path) | GCS object path where to store VyOs instance configuration file | `any` | `null` | no |
-| <a name="input_gcp_region"></a> [gcp\_region](#input\_gcp\_region) | Default GCP region where to spawn resources | `any` | n/a | yes |
-| <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | Name to assign to the VyOs instance | `string` | `"vyos"` | no |
-| <a name="input_instance_network_self_link"></a> [instance\_network\_self\_link](#input\_instance\_network\_self\_link) | VPC network self-link where to attach the VyOs instance | `any` | n/a | yes |
-| <a name="input_instance_private_ip"></a> [instance\_private\_ip](#input\_instance\_private\_ip) | Private network ip to assign to VyOs instance | `any` | n/a | yes |
-| <a name="input_instance_subnet_network_self_link"></a> [instance\_subnet\_network\_self\_link](#input\_instance\_subnet\_network\_self\_link) | Subnet self-link where to attach che VyOs instance | `any` | n/a | yes |
-| <a name="input_instance_tags"></a> [instance\_tags](#input\_instance\_tags) | Tags to assign to the vyos instance | `list` | <pre>[<br>  "vyos"<br>]</pre> | no |
-| <a name="input_instance_tier"></a> [instance\_tier](#input\_instance\_tier) | Machine tier for the VyOs instance | `string` | `"e2-small"` | no |
-| <a name="input_instance_vyos_image_name"></a> [instance\_vyos\_image\_name](#input\_instance\_vyos\_image\_name) | Instance image name | `any` | n/a | yes |
-| <a name="input_instance_vyos_image_region"></a> [instance\_vyos\_image\_region](#input\_instance\_vyos\_image\_region) | Instance image region | `string` | `"EU"` | no |
-| <a name="input_instance_zone"></a> [instance\_zone](#input\_instance\_zone) | GCP Zone where to spawn the VyOs instance | `any` | n/a | yes |
-| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Google project id where to spawn the VyOs instance | `any` | n/a | yes |
-| <a name="input_vyos_configuration_content"></a> [vyos\_configuration\_content](#input\_vyos\_configuration\_content) | Contents of the VyOs configuration to apply to the target instance | `any` | n/a | yes |
-| <a name="input_vyos_vanilla_image_name"></a> [vyos\_vanilla\_image\_name](#input\_vyos\_vanilla\_image\_name) | Name for the vyos vanilla image to build | `string` | `"vyos-vanilla"` | no |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | n/a | `any` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | n/a | `any` | n/a | yes |
+| <a name="input_zone"></a> [zone](#input\_zone) | n/a | `any` | n/a | yes |
 
+### Outputs
 
+No outputs.
 
 ## Licensing notes
 This module is provided as is, with absolutely no warranty.
