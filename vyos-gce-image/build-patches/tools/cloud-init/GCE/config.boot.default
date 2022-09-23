@@ -1,5 +1,5 @@
 interfaces {
-    ethernet ens4 {
+    ethernet eth0 {
         address dhcp
     }
     loopback lo {

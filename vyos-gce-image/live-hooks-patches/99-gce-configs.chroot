@@ -57,6 +57,11 @@ sudo systemctl enable login_helper.service
 sudo cat /etc/default/instance_configs.cfg | sudo sed -e 's/groups = /groups = vyattacfg,/'>/tmp/instance_configs.cfg
 sudo cp /tmp/instance_configs.cfg /etc/default/instance_configs.cfg
 
+# Patch GRUB to avoid IF renaming
+sudo cat /etc/default/grub | sed -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'>/etc/default/grub
+sudo grub-mkconfig
+
+
 # For inspecting logs:
 # journalctl -u login_helper.service
 # journalctl -u conf_reloader.service
