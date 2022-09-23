@@ -5,7 +5,9 @@ resource "google_project_service" "project_services" {
     "iam.googleapis.com",
     "storage.googleapis.com",
     "compute.googleapis.com",
-    "pubsub.googleapis.com"
+    "pubsub.googleapis.com",
+    "logging.googleapis.com",
+    "monitoring.googleapis.com"
   ])
   service = each.value
   disable_dependent_services  = false
