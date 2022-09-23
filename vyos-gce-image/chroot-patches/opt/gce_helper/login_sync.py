@@ -90,7 +90,9 @@ def get_instance_oslogin_users(wait: bool = True, timeout: int = 60) -> List[SSH
     l.debug("Fetching OS-Login users...")
     # TODO: surf all the users by browsing the page tokens
     raw_data = get_metadata(f"/computeMetadata/v1/oslogin/users", alt="json", wait_for_changes=wait, timeout_sec=timeout, additional_params={"pagesize":"2048"})
-    l.debug("RAW os-login users: %s", str(raw_data))
+    if raw_data is None:
+        l.debug("Could not retrieve instance oslogin users.")
+        return res
     oslogin_users = json.loads(raw_data)
 
     # TODO: parse the login profiles.
@@ -121,6 +123,9 @@ def get_instance_ssh_keys(wait: bool = True, timeout: int = 60) -> List[SSHKey]:
     """Retrieve the ssh keys from the instance metadata"""
     res = []
     instance_ssh_metadata_keys = get_metadata("/computeMetadata/v1/instance/attributes/ssh-keys", alt="text", wait_for_changes=wait, timeout_sec=timeout)
+    if instance_ssh_metadata_keys is None:
+        l.error("Could not retrieve instance ssh keys.")
+        return res
     l.debug("RAW ssh-keys metadata: %s", str(instance_ssh_metadata_keys))
     for line in instance_ssh_metadata_keys.split("\n"):
         l.debug("Processing line %s", line)
@@ -132,14 +137,22 @@ def get_instance_ssh_keys(wait: bool = True, timeout: int = 60) -> List[SSHKey]:
 def is_oslogin_enabled() -> bool:
     """Checks the current status of oslogin at project and instance level"""
     instance_oslogin_metadata = get_metadata("/computeMetadata/v1/instance/attributes/enable-oslogin", alt="text", wait_for_changes=False, timeout_sec=None)
-    l.debug("Os Login Status from instance metadata: %s", str(instance_oslogin_metadata))
-    instance_loginstatus = instance_oslogin_metadata.upper()=="TRUE"
-
+    if instance_osloginstatus is None:
+        l.debug("Could not retrieve oslogin status from instance.")
+        instance_oslogin_metadata = None
+    else:
+        l.debug("Os Login Status from instance metadata: %s", str(instance_oslogin_metadata))
+        instance_osloginstatus = instance_oslogin_metadata.upper()=="TRUE"
+    
     project_oslogin_metadata = get_metadata("/computeMetadata/v1/project/attributes/enable-oslogin", alt="text", wait_for_changes=False, timeout_sec=None)
-    l.debug("Os Login Status from project metadata: %s", str(project_oslogin_metadata))
-    project_oslogin_metadata = project_oslogin_metadata.upper()=="TRUE"
+    if project_oslogin_metadata is None:
+        l.debug("Could not retrieve oslogin status from project.")
+        project_oslogin_metadata = None
+    else:    
+        l.debug("Os Login Status from project metadata: %s", str(project_oslogin_metadata))
+        project_oslogin_metadata = project_oslogin_metadata.upper()=="TRUE"
 
-    return instance_loginstatus or project_oslogin_metadata
+    return instance_osloginstatus is not None and instance_oslogin_metadata or instance_osloginstatus is None and project_oslogin_metadata
 
 
 def main() -> None:

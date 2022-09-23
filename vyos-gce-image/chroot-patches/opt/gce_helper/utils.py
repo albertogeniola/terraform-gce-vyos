@@ -28,6 +28,9 @@ def get_metadata(metadata_path: str,
                         params=params,
                         headers={"Metadata-Flavor": "Google"},
                         timeout=timeout_sec)
+    if resp.status_code != 200:
+        l.error("Cannot access metadata: %s. Return code: %d", metadata_path, resp.status_code)
+        return None
     return resp.text
 
 
