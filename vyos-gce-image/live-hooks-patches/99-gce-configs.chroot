@@ -59,8 +59,6 @@ sudo cp /tmp/instance_configs.cfg /etc/default/instance_configs.cfg
 
 # Patch GRUB to avoid IF renaming
 sudo cat /etc/default/grub | sed -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"'>/etc/default/grub
-sudo grub-mkconfig
-
 
 # For inspecting logs:
 # journalctl -u login_helper.service
