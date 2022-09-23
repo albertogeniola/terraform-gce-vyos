@@ -14,6 +14,19 @@ This module achieves the following major objectives:
 - Enables the VyOS instance to update its configuration using Cloud Storage and Pub/Sub notifications
 - Enables users connecting via IAP/GCLOUD ssh to administer the VyOS instance with the built-in command line
 
+### Why not simply using cloud-init?
+Cloud-init is a great feature that allows initial configuration and bootstrapping of cloud images. VyOS has developed
+a couple of modules that allow fetching and changing the configuration of the router at boot time, via metadata gathering,
+specifically using the `user-data` key.
+
+However, that approach has some major limitations:
+- It works by issuing configuration commands (i.e. imperative) while the rest of the module works with declarative approach.
+- It is limited to the maximum size of the metadata
+- It requires a reboot to be reapplied (most likely a startup script)
+
+This module uses a GCS file to hold the configuration state, fetched via pubsub event by a python daemon running on the VyOS instance.
+However, the module still allows the developer to pass the user-data content, in case that is preferred.
+
 ## Image Prerequisites
 This Terraform module requires a custom GCE Image to be built or imported into the GCP
 project where the VyOS router will reside. You can either build and customize that image yourself (but chances are you landed on this page because you don't want to do so), 
@@ -47,7 +60,7 @@ _Note_: this module won't take care of enabling the necessary APIs. It is develo
 > shell script.
 
 
-# Limitations
+## Limitations
 Some organizational policies might require an exception for this module to work.
 For instance, the `constraints/storage.uniformBucketLevelAccess` constraint should not apply to the bucket where the configuration is held, as the current
 version of the module works with ACLs on single objects.
