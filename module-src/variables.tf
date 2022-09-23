@@ -65,3 +65,8 @@ variable "enable_serial_port_connection" {
   description = "When true, allows the connection via the serial port"
   default     = false
 }
+
+variable "user_data_content" {
+  description = "Holds the content of the user-data metadata to be used as configuration script at instance boot."
+  default     = ""
+}

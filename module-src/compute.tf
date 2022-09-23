@@ -36,8 +36,9 @@ resource "google_compute_instance" "vyos" {
 
   metadata = {
     "pubsub-subscription" = google_pubsub_subscription.vyos_instance_subscription.name
-    "serial-port-enable" = upper(var.enable_serial_port_connection)
-    "enable-oslogin" = "FALSE"
+    "serial-port-enable"  = upper(var.enable_serial_port_connection)
+    "enable-oslogin"      = "FALSE"
+    "user-data"           = var.user_data_content
   }
 
   depends_on = [

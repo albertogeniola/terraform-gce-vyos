@@ -12,6 +12,11 @@ module "vyos_instance" {
     vyos_configuration_content  = file("vyos.config") # Note: you can use a templatefile function to apply scripting logic to the configuration
                                                       # file and drive some initial parameters via terraform.
 
+    # Using user-data to configure the secondary NIC
+    #  We do this as we are using a multi-nic VyOS instance and the default configuration only
+    #  sets the DHCP option for the primary interface.
+    user_data_content           = file("user-data.yaml")
+
     # GCE config
     instance_tier               = "n2-standard-2"
     instance_zone               = var.zone
