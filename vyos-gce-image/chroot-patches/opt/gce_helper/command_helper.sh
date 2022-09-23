@@ -9,7 +9,7 @@ fi
 API_HOST=$1
 API_PORT=$2
 API_KEY=$3
-API_KEY_NAME=$$
+API_KEY_NAME=$4
 
 # Sets up the API endpoint for later use
 source /opt/vyatta/etc/functions/script-template
