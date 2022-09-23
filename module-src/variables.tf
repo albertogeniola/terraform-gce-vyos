@@ -43,9 +43,14 @@ variable "instance_vyos_image_name" {
   description = "Instance image name"
 }
 
-variable "instance_vyos_image_region" {
-  description = "Instance image region"
-  default     = "EU"
+variable "instance_vyos_image_project_id" {
+  default     = null 
+  description = <<EOF
+    The project id where the vyos image is stored. Override this parameter if the image 
+    specified as instance_vyos_image_name is located into another GCP project.
+    When null, the project_id value is used instead.
+    EOF
+  
 }
 
 variable "networks_configuration" {

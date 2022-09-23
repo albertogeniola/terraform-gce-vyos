@@ -8,7 +8,7 @@ resource "google_compute_instance" "vyos" {
 
   boot_disk {
     initialize_params {
-      image = "${var.project_id}/${var.instance_vyos_image_name}"
+      image = data.google_compute_image.vyos.self_link
     }
   }
 

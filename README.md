@@ -113,7 +113,6 @@ Refer to the `example` folder for some quick examples on how to use this module.
 | <a name="input_instance_tags"></a> [instance\_tags](#input\_instance\_tags) | Tags to assign to the vyos instance | `list` | <pre>[<br>  "vyos"<br>]</pre> | no |
 | <a name="input_instance_tier"></a> [instance\_tier](#input\_instance\_tier) | Machine tier for the VyOs instance | `string` | `"e2-small"` | no |
 | <a name="input_instance_vyos_image_name"></a> [instance\_vyos\_image\_name](#input\_instance\_vyos\_image\_name) | Instance image name | `any` | n/a | yes |
-| <a name="input_instance_vyos_image_region"></a> [instance\_vyos\_image\_region](#input\_instance\_vyos\_image\_region) | Instance image region | `string` | `"EU"` | no |
 | <a name="input_instance_zone"></a> [instance\_zone](#input\_instance\_zone) | GCP Zone where to spawn the VyOs instance | `any` | n/a | yes |
 | <a name="input_networks_configuration"></a> [networks\_configuration](#input\_networks\_configuration) | Instance networking configuration. | <pre>map(object({<br>    assign_external_ip=bool,<br>    static_external_ip=string,<br>    create_iap_ssh_firewall_rule=bool,<br>    network_project_id=string,<br>    network=string,<br>    subnetwork=string,<br>    network_ip=string,<br>  }))</pre> | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Google project id where to spawn the VyOs instance | `any` | n/a | yes |

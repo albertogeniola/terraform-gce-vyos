@@ -21,7 +21,6 @@ module "vyos_instance" {
     instance_tier               = "n2-standard-2"
     instance_zone               = var.zone
     instance_vyos_image_name    = "vyos-gce" # ATTENTION! THIS IS THE NAME OF THE VYOS IMAGE IMPORTED FROM THIS REPO.
-    instance_vyos_image_region  = "eu"       # ATTENTION! Make sure to use the correct region where the image resides.
 
     # We want to be able to connect via serial port
     enable_serial_port_connection = true
