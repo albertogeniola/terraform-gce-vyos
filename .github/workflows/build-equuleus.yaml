@@ -107,10 +107,9 @@ jobs:
           cp ./vyos-gce-image/build-patches/tools/cloud-init/GCE/config.boot.default ./vyos-build/tools/cloud-init/GCE/config.boot.default
           cp -vR ./vyos-gce-image/chroot-patches/* ./vyos-build/data/live-build-config/includes.chroot/
           cp -vR ./vyos-gce-image/live-hooks-patches/* ./vyos-build/data/live-build-config/hooks/live/
-
           # Inject the grub boot parameters
-          sed -e 's/boot=live/boot=live net.ifnames=0 biosdevname=0/' ./vyos-build/scripts/build-GCE-image>./vyos-build/scripts/build-GCE-image
-          cat ./vyos-build/scripts/build-GCE-image
+          cat ./vyos-build/scripts/build-GCE-image | sed -e 's/boot=live/boot=live net.ifnames=0 biosdevname=0/' ./vyos-build/scripts/build-GCE-image>/tmp/gce-build-script
+          cp /tmp/gce-build-script ./vyos-build/scripts/build-GCE-image
       - name: Build ISO
         if: ${{ needs.CheckBuildRequired.outputs.should_build == 'true' }}
         run: |
