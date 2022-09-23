@@ -8,7 +8,7 @@ from utils import parse_gce_notification, download_gcs_file
 from vyos_api import get_local_api_client
 
 
-_CLIENT_ID = __name__
+_CLIENT_ID = "CONF_RELOADER"
 
 
 logging.basicConfig(format='conf_reloader:%(levelname)s:%(message)s', level=logging.INFO)

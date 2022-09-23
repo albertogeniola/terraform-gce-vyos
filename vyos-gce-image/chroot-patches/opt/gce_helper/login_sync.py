@@ -12,7 +12,8 @@ from constants import LOGIN_SYNC_METADATA_TIMEOUT, CFG_GROUP
 from datetime import datetime
 
 
-_CLIENT_ID = __name__
+_CLIENT_ID = "LOGIN_SYNC"
+
 logging.basicConfig(format='login_sync:%(levelname)s:%(message)s', level=logging.INFO)
 l = logging.getLogger(__name__)
 
