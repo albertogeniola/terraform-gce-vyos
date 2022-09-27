@@ -123,9 +123,8 @@ def get_instance_oslogin_users(wait: bool = True, timeout: int = 60) -> List[SSH
 def get_instance_ssh_keys(wait: bool = True, timeout: int = 60) -> List[SSHKey]:
     """Retrieve the ssh keys from the instance metadata"""
     res = []
-    instance_ssh_metadata_keys = get_metadata("/computeMetadata/v1/instance/attributes/ssh-keys", alt="text", wait_for_changes=wait, timeout_sec=timeout)
+    instance_ssh_metadata_keys = get_metadata("/computeMetadata/v1/instance/attributes/ssh-keys", alt="text", wait_for_changes=wait, timeout_sec=timeout, error_if_not_found=False)
     if instance_ssh_metadata_keys is None:
-        l.error("Could not retrieve instance ssh keys.")
         return res
     l.debug("RAW ssh-keys metadata: %s", str(instance_ssh_metadata_keys))
     for line in instance_ssh_metadata_keys.split("\n"):
@@ -137,14 +136,14 @@ def get_instance_ssh_keys(wait: bool = True, timeout: int = 60) -> List[SSHKey]:
 
 def is_oslogin_enabled() -> bool:
     """Checks the current status of oslogin at project and instance level"""
-    instance_osloginstatus = get_metadata("/computeMetadata/v1/instance/attributes/enable-oslogin", alt="text", wait_for_changes=False, timeout_sec=None)
+    instance_osloginstatus = get_metadata("/computeMetadata/v1/instance/attributes/enable-oslogin", alt="text", wait_for_changes=False, timeout_sec=None, error_if_not_found=False)
     if instance_osloginstatus is None:
         l.debug("Could not retrieve oslogin status from instance.")
     else:
         l.debug("Os Login Status from instance metadata: %s", str(instance_osloginstatus))
         instance_osloginstatus = instance_osloginstatus.upper()=="TRUE"
     
-    project_oslogin_metadata = get_metadata("/computeMetadata/v1/project/attributes/enable-oslogin", alt="text", wait_for_changes=False, timeout_sec=None)
+    project_oslogin_metadata = get_metadata("/computeMetadata/v1/project/attributes/enable-oslogin", alt="text", wait_for_changes=False, timeout_sec=None, error_if_not_found=False)
     if project_oslogin_metadata is None:
         l.debug("Could not retrieve oslogin status from project.")
         project_oslogin_metadata = None

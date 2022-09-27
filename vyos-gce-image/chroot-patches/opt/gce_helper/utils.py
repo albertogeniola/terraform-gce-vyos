@@ -3,6 +3,7 @@ from google.cloud import storage
 import logging
 import requests
 import os
+from exceptions import MetadataException
 from typing.io import TextIO
 
 _METADATA_HOST="http://metadata.google.internal"
@@ -13,7 +14,8 @@ def get_metadata(metadata_path: str,
                  alt: str = None,
                  wait_for_changes: Optional[bool] = None,
                  timeout_sec: Optional[int] = None,
-                 additional_params: Optional[Dict] = None):
+                 additional_params: Optional[Dict] = None,
+                 error_if_not_found: Optional[bool] = True):
     """Fetches metadata from metadata server"""
     params = {}
     if wait_for_changes is not None:
@@ -29,8 +31,9 @@ def get_metadata(metadata_path: str,
                         headers={"Metadata-Flavor": "Google"},
                         timeout=timeout_sec)
     if resp.status_code != 200:
-        l.error("Cannot access metadata: %s. Return code: %d", metadata_path, resp.status_code)
-        return None
+        if resp.status_code == 404 and not error_if_not_found:
+            return None
+        raise MetadataException(f"Cannot access metadata: {metadata_path}. Return code: {resp.status_code}")
     return resp.text
 
 

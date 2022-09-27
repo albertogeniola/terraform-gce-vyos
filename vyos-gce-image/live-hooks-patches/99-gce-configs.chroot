@@ -48,6 +48,11 @@ sudo /opt/gce_helper/.venv/bin/python -m pip install pip --upgrade
 sudo /opt/gce_helper/.venv/bin/python -m pip install wheel
 sudo /opt/gce_helper/.venv/bin/python -m pip install -r /opt/gce_helper/requirements.txt
 
+# FIXME: Link the VyOS dist-package into the venv (this is a temporary workaround)
+#        so that we can reference vyos API libraries from our VENV
+sudo mkdir ./.venv/lib/python3.7/dist-packages
+sudo ln -s /usr/lib/python3/dist-packages/vyos ./.venv/lib/python3.7/dist-packages/vyos
+
 # Install services
 sudo systemctl daemon-reload
 sudo systemctl enable conf_reloader.service

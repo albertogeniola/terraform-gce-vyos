@@ -20,3 +20,6 @@ class VyOSApiException(Exception):
     def data(self):
         return self._data
 
+
+class MetadataException(Exception):
+    pass

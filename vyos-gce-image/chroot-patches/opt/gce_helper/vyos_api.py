@@ -7,6 +7,8 @@ import logging
 import json
 from typing import List, Dict, Tuple
 from exceptions import VyOSApiException
+from vyos.configtree import ConfigTree
+from constants import VYOS_API_PORT
 
 
 l = logging.getLogger(__name__)
@@ -40,6 +42,7 @@ class VyOsAPIClient:
             # Try parse the response
             try:
                 parsed_data = resp.json()
+                l.warning("Errored json response: %s", resp.json())
             except Exception:
                 l.error("Unable to parse api error from response")
                 raise VyOSApiException(status_code=resp.status_code, error=f"Api call returned non-successful status code: {resp.status_code}")
@@ -54,6 +57,12 @@ class VyOsAPIClient:
             raise VyOSApiException(status_code=resp.status_code, error=parsed_data["error"], data=parsed_data["data"])
         return parsed_data['data']
 
+    def patch_config(self,config_text: str, patch_key: List[str], patch_value: str) -> str:
+        """Given a configuration file, returns the patched version"""
+        conf=ConfigTree(config_text)
+        conf.set(patch_key, value=patch_value) 
+        return conf.to_string()
+
     def load_configuration_from_file(self, file_path: str) -> dict:
         l.info(f"Loading configuration from {file_path}")
         return self._vyos_post(path=f"/config-file", data_dict={"op": "load", "file": file_path})
@@ -63,7 +72,7 @@ class VyOsAPIClient:
         return self._vyos_post(path=f"/retrieve", data_dict={"op": "showConfig", "path": path})
 
 
-def _setup_client(key_name: str, bind_host: str = "localhost", bind_port: int = 8000, api_key: str = None) -> VyOsAPIClient:
+def _setup_client(key_name: str, bind_host: str = "localhost", bind_port: int = VYOS_API_PORT, api_key: str = None) -> VyOsAPIClient:
     l.info(f"Initializing vyos api configuration. Binding {bind_host}:{bind_port}")
     cur_dir = pathlib.Path(__file__).parent.resolve()
     api_setup_path = os.path.join(cur_dir, "command_helper.sh")
