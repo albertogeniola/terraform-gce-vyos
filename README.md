@@ -80,7 +80,7 @@ Refer to the `example` folder for some quick examples on how to use this module.
 |------|---------|
 | <a name="provider_google"></a> [google](#provider\_google) | n/a |
 
-### Resources
+## Resources
 
 | Name | Type |
 |------|------|
@@ -98,10 +98,11 @@ Refer to the `example` folder for some quick examples on how to use this module.
 | [google_storage_bucket_iam_member.instance_sa_bucket_permissions](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_object.conf_file_object](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_object) | resource |
 | [google_storage_notification.configuration_update](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_notification) | resource |
+| [google_compute_image.vyos](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_image) | data source |
 | [google_iam_policy.subscription_subscriber](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy) | data source |
 | [google_storage_project_service_account.gcs_account](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/storage_project_service_account) | data source |
 
-### Inputs
+## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -113,9 +114,11 @@ Refer to the `example` folder for some quick examples on how to use this module.
 | <a name="input_instance_tags"></a> [instance\_tags](#input\_instance\_tags) | Tags to assign to the vyos instance | `list` | <pre>[<br>  "vyos"<br>]</pre> | no |
 | <a name="input_instance_tier"></a> [instance\_tier](#input\_instance\_tier) | Machine tier for the VyOs instance | `string` | `"e2-small"` | no |
 | <a name="input_instance_vyos_image_name"></a> [instance\_vyos\_image\_name](#input\_instance\_vyos\_image\_name) | Instance image name | `any` | n/a | yes |
+| <a name="input_instance_vyos_image_project_id"></a> [instance\_vyos\_image\_project\_id](#input\_instance\_vyos\_image\_project\_id) | The project id where the vyos image is stored. Override this parameter if the image <br>    specified as instance\_vyos\_image\_name is located into another GCP project.<br>    When null, the project\_id value is used instead. | `any` | `null` | no |
 | <a name="input_instance_zone"></a> [instance\_zone](#input\_instance\_zone) | GCP Zone where to spawn the VyOs instance | `any` | n/a | yes |
 | <a name="input_networks_configuration"></a> [networks\_configuration](#input\_networks\_configuration) | Instance networking configuration. | <pre>map(object({<br>    assign_external_ip=bool,<br>    static_external_ip=string,<br>    create_iap_ssh_firewall_rule=bool,<br>    network_project_id=string,<br>    network=string,<br>    subnetwork=string,<br>    network_ip=string,<br>  }))</pre> | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Google project id where to spawn the VyOs instance | `any` | n/a | yes |
+| <a name="input_user_data_content"></a> [user\_data\_content](#input\_user\_data\_content) | Holds the content of the user-data metadata to be used as configuration script at instance boot. | `string` | `""` | no |
 | <a name="input_vyos_configuration_content"></a> [vyos\_configuration\_content](#input\_vyos\_configuration\_content) | Contents of the VyOs configuration to apply to the target instance | `any` | n/a | yes |
 
 ## Licensing notes
