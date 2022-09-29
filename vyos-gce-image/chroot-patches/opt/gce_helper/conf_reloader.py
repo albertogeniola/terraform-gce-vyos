@@ -1,7 +1,7 @@
-import logging
 import tempfile
 import os
 from google.cloud import pubsub_v1
+from gcelogging import get_logger
 from constants import VYOS_API_PORT
 from configuration import configuration
 from utils import parse_gce_notification, download_gcs_file
@@ -13,8 +13,7 @@ from exceptions import ConfigurationDownloadException
 _CLIENT_ID = "CONF_RELOADER"
 
 
-logging.basicConfig(format='conf_reloader:%(levelname)s:%(message)s', level=logging.INFO)
-l = logging.getLogger(__name__)
+l = get_logger(__name__)
 
 
 def reload_configuration(project_id, bucket_id, object_id):

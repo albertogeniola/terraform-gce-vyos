@@ -1,21 +1,18 @@
-import logging
-import tempfile
 import requests
 import re
 import json
 import hashlib
-from utils import get_metadata, add_user_to_group
+from gcelogging import get_logger
+from utils import get_metadata
 from typing import List, Optional
 from vyos_api import get_local_api_client
-from requests.exceptions import ReadTimeout
 from constants import LOGIN_SYNC_METADATA_TIMEOUT, CFG_GROUP
 from datetime import datetime
 
 
 _CLIENT_ID = "LOGIN_SYNC"
 
-logging.basicConfig(format='login_sync:%(levelname)s:%(message)s', level=logging.INFO)
-l = logging.getLogger(__name__)
+l = get_logger(__name__)
 
 metadata_instance_key_regex = re.compile('([0-9a-zA-Z_]+):([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+)')
 metadata_oslogin_key_regex = re.compile('([^ ]+) ([^ ]+) ([^ ]+)')
