@@ -12,3 +12,4 @@ def get_logger(logger_name:str, level = logging.INFO):
     cloud_logger = logging.getLogger(logger_name)
     cloud_logger.setLevel(logging.INFO)
     cloud_logger.addHandler(handler)
+    return cloud_logger
