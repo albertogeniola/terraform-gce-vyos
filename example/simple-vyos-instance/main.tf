@@ -8,7 +8,7 @@ module "vyos_instance" {
 
     # Dynamic config
     configuration_bucket_name   = "${var.project_id}-vyos-conf"
-    configuration_bucket_path   = "/configuration"
+    configuration_bucket_path   = "configuration"
     vyos_configuration_content  = file("vyos.config") # Note: you can use a templatefile function to apply scripting logic to the configuration
                                                       # file and drive some initial parameters via terraform.
 

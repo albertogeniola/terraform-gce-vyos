@@ -23,3 +23,7 @@ class VyOSApiException(Exception):
 
 class MetadataException(Exception):
     pass
+
+
+class ConfigurationDownloadException(Exception):
+    pass
