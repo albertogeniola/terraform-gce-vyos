@@ -4,7 +4,7 @@
 Description=VyOs login helper
 Wants=network-online.target
 After=network-online.target
-#After=cloud-init.target
+After=vyos.target
 After=vyos-http-api.target
 
 [Service]

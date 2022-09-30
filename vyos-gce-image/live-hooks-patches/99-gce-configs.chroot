@@ -54,8 +54,12 @@ sudo mkdir /opt/gce_helper/.venv/lib/python3.7/dist-packages
 sudo ln -s /usr/lib/python3/dist-packages/vyos /opt/gce_helper/.venv/lib/python3.7/dist-packages/vyos
 
 # Patch the OPS agent to run after cloud-init
-#sudo cat /lib/systemd/system/google-cloud-ops-agent.service | sudo sed -e 's/Wants=/Wants=cloud-init-local.service /'>/tmp/oogle-cloud-ops-agent.service
-#sudo cp /tmp/oogle-cloud-ops-agent.service /lib/systemd/system/google-cloud-ops-agent.service
+sudo cat /lib/systemd/system/google-cloud-ops-agent-fluent-bit.service | sudo sed -e 's/After=/After=vyos.target /'>/tmp/google-cloud-ops-agent-fluent-bit.service
+sudo cp /tmp/google-cloud-ops-agent-fluent-bit.service /lib/systemd/system/google-cloud-ops-agent-fluent-bit.service
+sudo rm /tmp/google-cloud-ops-agent-fluent-bit.service
+sudo cat /lib/systemd/system/google-cloud-ops-agent-opentelemetry-collector.service | sudo sed -e 's/After=/After=vyos.target /'>/tmp/google-cloud-ops-agent-opentelemetry-collector.service
+sudo cp /tmp/google-cloud-ops-agent-opentelemetry-collector.service /lib/systemd/system/google-cloud-ops-agent-opentelemetry-collector.service
+sudo rm /tmp/google-cloud-ops-agent-opentelemetry-collector.service
 
 # Install services
 sudo systemctl daemon-reload
@@ -65,7 +69,4 @@ sudo systemctl enable login_helper.service
 # Configure the agent to automatically set users to vyattacfg group
 sudo cat /etc/default/instance_configs.cfg | sudo sed -e 's/groups = /groups = vyattacfg,/'>/tmp/instance_configs.cfg
 sudo cp /tmp/instance_configs.cfg /etc/default/instance_configs.cfg
-
-# For inspecting logs:
-# journalctl -u login_helper.service
-# journalctl -u conf_reloader.service
+sudo rm /tmp/instance_configs.cfg
