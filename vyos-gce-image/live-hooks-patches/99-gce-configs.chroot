@@ -53,6 +53,10 @@ sudo /opt/gce_helper/.venv/bin/python -m pip install -r /opt/gce_helper/requirem
 sudo mkdir /opt/gce_helper/.venv/lib/python3.7/dist-packages
 sudo ln -s /usr/lib/python3/dist-packages/vyos /opt/gce_helper/.venv/lib/python3.7/dist-packages/vyos
 
+# Patch the OPS agent to run after cloud-init
+#sudo cat /lib/systemd/system/google-cloud-ops-agent.service | sudo sed -e 's/Wants=/Wants=cloud-init-local.service /'>/tmp/oogle-cloud-ops-agent.service
+#sudo cp /tmp/oogle-cloud-ops-agent.service /lib/systemd/system/google-cloud-ops-agent.service
+
 # Install services
 sudo systemctl daemon-reload
 sudo systemctl enable conf_reloader.service

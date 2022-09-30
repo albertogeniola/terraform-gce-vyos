@@ -1,8 +1,9 @@
 import tempfile
 import os
+import logging
 from google.cloud import pubsub_v1
-from gcelogging import get_logger
-from constants import VYOS_API_PORT
+from gcelogging import setup_logging
+from constants import VYOS_API_PORT, CONF_RELOADER_LOG_NAME
 from configuration import configuration
 from utils import parse_gce_notification, download_gcs_file
 from vyos_api import get_local_api_client
@@ -13,7 +14,7 @@ from exceptions import ConfigurationDownloadException
 _CLIENT_ID = "CONF_RELOADER"
 
 
-l = get_logger(__name__)
+l = logging.getLogger(CONF_RELOADER_LOG_NAME)
 
 
 def reload_configuration(project_id, bucket_id, object_id):
@@ -100,6 +101,8 @@ def callback(message: pubsub_v1.subscriber.message.Message) -> None:
 def main() -> None:
     """Entry point of the application."""
     l.info("Starting conf_reloader daemon.")
+    
+    setup_logging()
 
     # Subscribe to the pubsub topic where configuration file changes happen
     subscriber = pubsub_v1.SubscriberClient()

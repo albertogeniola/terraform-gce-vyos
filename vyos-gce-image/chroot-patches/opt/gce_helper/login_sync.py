@@ -2,17 +2,18 @@ import requests
 import re
 import json
 import hashlib
-from gcelogging import get_logger
+import logging
+from gcelogging import setup_logging
 from utils import get_metadata
 from typing import List, Optional
 from vyos_api import get_local_api_client
-from constants import LOGIN_SYNC_METADATA_TIMEOUT, CFG_GROUP
+from constants import LOGIN_SYNC_METADATA_TIMEOUT, LOGIN_SYNC_LOG_NAME
 from datetime import datetime
 
 
 _CLIENT_ID = "LOGIN_SYNC"
 
-l = get_logger(__name__)
+l = logging.getLogger(LOGIN_SYNC_LOG_NAME)
 
 metadata_instance_key_regex = re.compile('([0-9a-zA-Z_]+):([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+)')
 metadata_oslogin_key_regex = re.compile('([^ ]+) ([^ ]+) ([^ ]+)')
@@ -154,6 +155,8 @@ def is_oslogin_enabled() -> bool:
 def main() -> None:
     """Entry point of the utility."""
     l.info("Starting login_sync daemon.")
+    
+    setup_logging()
 
     # Make sure OSLogin is not set, as VyOS won't work with users managed by OSLogin.
     if is_oslogin_enabled():
