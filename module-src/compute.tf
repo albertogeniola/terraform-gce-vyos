@@ -1,10 +1,11 @@
 resource "google_compute_instance" "vyos" {
-  project       = var.project_id
-  name          = var.instance_name
-  machine_type  = var.instance_tier
-  zone          = var.instance_zone
+  project         = var.project_id
+  name            = var.instance_name
+  machine_type    = var.instance_tier
+  zone            = var.instance_zone
 
-  tags          = var.instance_tags
+  tags            = var.instance_tags
+  can_ip_forward  = true
 
   boot_disk {
     initialize_params {

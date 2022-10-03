@@ -61,13 +61,18 @@ _Note_: this module won't take care of enabling the necessary APIs. It is develo
 
 
 ## Limitations
+So far, the VyOS image has been tested only on n2 or n1 instance families. __Other instance families might not be supported__.
+
 Some organizational policies might require an exception for this module to work.
-For instance, the `constraints/storage.uniformBucketLevelAccess` constraint should not apply to the bucket where the configuration is held, as the current
-version of the module works with ACLs on single objects.
+For instance, the `constraints/storage.uniformBucketLevelAccess` constraint should not apply to the bucket where the configuration is held, as the current version of the module works with ACLs on single objects.
 If you plan to use VyOS instance with a public IP assigned, you should make sure that the policy `constraints/compute.vmExternalIpAccess` does allow that.
 
 Moreover, at the time of writing, the provided GCE VyOS image does not comply with shielded image requirements nor supports OS-LOGIN. 
 Therefore `constraints/compute.requireShieldedVm` and `constraints/compute.requireOsLogin` org policies should allow an exception for the VyOS intance.
+
+Lastly, the current version of the module assigns the "ip_forwardign" capability to the vyos instance, as it would be generally useful 
+when using natting and firewalling capabilities of VyOS. Therefore, you should make sure the `constraints/compute.vmCanIpForward` 
+organizational policy allows the VyOS instance to use the ip_forward functionality.
 
 ## Usage
 Refer to the `example` folder for some quick examples on how to use this module.
