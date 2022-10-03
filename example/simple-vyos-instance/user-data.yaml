@@ -1,4 +1,0 @@
-#cloud-config
-vyos_config_commands:
-  - set interfaces ethernet eth1 address dhcp
-  - commit
