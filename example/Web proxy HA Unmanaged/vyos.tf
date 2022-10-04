@@ -34,7 +34,7 @@ module "vyos_instance_1" {
         assign_external_ip = false
         static_external_ip = null
 
-        create_iap_ssh_firewall_rule = false
+        create_iap_ssh_firewall_rule = true
       },
       
       # Secondary interface
@@ -89,7 +89,7 @@ module "vyos_instance_2" {
         assign_external_ip = false
         static_external_ip = null
 
-        create_iap_ssh_firewall_rule = false
+        create_iap_ssh_firewall_rule = true
       },
 
       # Secondary interface
@@ -104,6 +104,6 @@ module "vyos_instance_2" {
 
         # Enable IAP connections on the external interface.
         create_iap_ssh_firewall_rule = true
-      },
+      }
     }
 }
