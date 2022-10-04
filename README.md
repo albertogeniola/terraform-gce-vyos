@@ -63,6 +63,10 @@ _Note_: this module won't take care of enabling the necessary APIs. It is develo
 ## Limitations
 So far, the VyOS image has been tested only on n2 or n1 instance families. __Other instance families might not be supported__.
 
+When using this module as part of an unmanaged instance group, please be aware that the order of NICs does matter. 
+In particular, it's only possible to group VMs based on their primary NIC. Keep that in mind when grouping multiple VyOS instances into an unmanaged instance group.
+
+## Organizational policies prerequisites
 Some organizational policies might require an exception for this module to work.
 For instance, the `constraints/storage.uniformBucketLevelAccess` constraint should not apply to the bucket where the configuration is held, as the current version of the module works with ACLs on single objects.
 If you plan to use VyOS instance with a public IP assigned, you should make sure that the policy `constraints/compute.vmExternalIpAccess` does allow that.
@@ -73,6 +77,7 @@ Therefore `constraints/compute.requireShieldedVm` and `constraints/compute.requi
 Lastly, the current version of the module assigns the "ip_forwardign" capability to the vyos instance, as it would be generally useful 
 when using natting and firewalling capabilities of VyOS. Therefore, you should make sure the `constraints/compute.vmCanIpForward` 
 organizational policy allows the VyOS instance to use the ip_forward functionality.
+
 
 ## Usage
 Refer to the `example` folder for some quick examples on how to use this module.
