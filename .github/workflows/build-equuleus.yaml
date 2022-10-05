@@ -50,13 +50,14 @@ jobs:
           LOCAL_COMMIT_SHA=$(git rev-parse HEAD)
           git fetch --tags
           if [[  "${{steps.existing_release_id.outputs.tag_name}}" == "" ]]; then
-            git checkout equuleus
+            LATEST_RELEASE_TAG_SHA=""
+            EXISTING_RELEASE_ID=""
           else
             git checkout refs/tags/${{steps.existing_release_id.outputs.tag_name}}
+            LATEST_RELEASE_TAG_SHA=$(git rev-parse HEAD)
+            EXISTING_RELEASE_ID="${{steps.existing_release_id.outputs.id}}"
           fi
           
-          LATEST_RELEASE_TAG_SHA=$(git rev-parse HEAD)
-          EXISTING_RELEASE_ID="${{steps.existing_release_id.outputs.id}}"
           if [[ $EXISTING_RELEASE_ID == "" ]]; then
             EXISTING_RELEASE_EMPTY="true"
           else
