@@ -2,10 +2,8 @@
 
 [Unit]
 Description=VyOs configuration reloader
-Wants=network-online.target
-After=network-online.target
-After=vyos.target
-After=vyos-http-api.target
+After=network-online.target vyos.target vyos-http-api.target
+DefaultDependencies=no
 
 [Service]
 User=root
