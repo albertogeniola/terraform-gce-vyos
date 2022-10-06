@@ -36,6 +36,7 @@ resource "google_compute_firewall" "proxy_internal_vms" {
   name          = "fw-inbound-proxy-internal"
   network       = google_compute_network.vyos_internal_vpc.self_link
   source_ranges = [local.internal_subnet_cidr]
+  target_service_accounts = [module.vyos_instance.sa_email]
   allow {
     protocol  = "tcp"
     ports     = [ 3128 ]
