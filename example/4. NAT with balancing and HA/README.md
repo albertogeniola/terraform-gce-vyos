@@ -1,6 +1,7 @@
 # VyOS as RFC1918 High Available NAT
 This module is an evolution of the NAT example. Instead of using a single VyOS instance, this example relies on a couple of instances,
-each one installed on a distinct zone. An internal load balancer takes care of dispatching the connections among the two instances.
+each one installed on a distinct zone, in an active/active fashion. 
+An internal load balancer takes care of dispatching the connections among the two instances.
 
 <img src="./ha-nat.png" width=600 alt="High Available PAT implementation"/>
 
