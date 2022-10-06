@@ -63,8 +63,8 @@ _Note_: this module won't take care of enabling the necessary APIs. It is develo
 ## Limitations
 So far, the VyOS image has been tested only on n2 or n1 instance families. __Other instance families might not be supported__.
 
-When using this module as part of an unmanaged instance group, please be aware that the order of NICs does matter. 
-In particular, it's only possible to group VMs based on their primary NIC. Keep that in mind when grouping multiple VyOS instances into an unmanaged instance group.
+The VyOS image is equipped with the host-agent which might require access to Google APIs. Make sure the Subnet you attach the VyOS instance to 
+has the Private Google Access (PGA) activated. 
 
 ## Organizational policies prerequisites
 Some organizational policies might require an exception for this module to work.

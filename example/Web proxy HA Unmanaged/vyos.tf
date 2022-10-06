@@ -23,22 +23,8 @@ module "vyos_instance_1" {
     # Networking configuration
     networks_configuration = {
       
-      # Primary interface: as we plan to use a ILB with an unmanaged instance group, we must set 
-      #  the internal_vpc as the first NIC: https://cloud.google.com/compute/docs/instance-groups/creating-groups-of-unmanaged-instances#group_membership
+      # Primary interface
       0 = {
-        network_project_id  = var.project_id
-        network             = google_compute_network.vyos_internal_vpc.self_link
-        subnetwork          = google_compute_subnetwork.vyos_internal_subnet.self_link
-        network_ip          = local.internal_vyos_1_ip
-
-        assign_external_ip = false
-        static_external_ip = null
-
-        create_iap_ssh_firewall_rule = true
-      },
-      
-      # Secondary interface
-      1 = {
         network_project_id  = var.project_id
         network             = google_compute_network.vyos_external_vpc.self_link
         subnetwork          = google_compute_subnetwork.vyos_external_subnet.self_link
@@ -48,6 +34,18 @@ module "vyos_instance_1" {
         static_external_ip = null
 
         # Enable IAP connections on the external interface.
+        create_iap_ssh_firewall_rule = true
+      },
+      # Secondary interface
+      1 = {
+        network_project_id  = var.project_id
+        network             = google_compute_network.vyos_internal_vpc.self_link
+        subnetwork          = google_compute_subnetwork.vyos_internal_subnet.self_link
+        network_ip          = local.internal_vyos_1_ip
+
+        assign_external_ip = false
+        static_external_ip = null
+
         create_iap_ssh_firewall_rule = true
       }
     }
@@ -78,22 +76,8 @@ module "vyos_instance_2" {
     # Networking configuration
     networks_configuration = {
       
-      # Primary interface: as we plan to use a ILB with an unmanaged instance group, we must set 
-      #  the internal_vpc as the first NIC: https://cloud.google.com/compute/docs/instance-groups/creating-groups-of-unmanaged-instances#group_membership
+      # Primary interface
       0 = {
-        network_project_id  = var.project_id
-        network             = google_compute_network.vyos_internal_vpc.self_link
-        subnetwork          = google_compute_subnetwork.vyos_internal_subnet.self_link
-        network_ip          = local.internal_vyos_2_ip
-
-        assign_external_ip = false
-        static_external_ip = null
-
-        create_iap_ssh_firewall_rule = true
-      },
-
-      # Secondary interface
-      1 = {
         network_project_id  = var.project_id
         network             = google_compute_network.vyos_external_vpc.self_link
         subnetwork          = google_compute_subnetwork.vyos_external_subnet.self_link
@@ -103,6 +87,19 @@ module "vyos_instance_2" {
         static_external_ip = null
 
         # Enable IAP connections on the external interface.
+        create_iap_ssh_firewall_rule = true
+      },
+
+      # Secondary interface
+      1 = {
+        network_project_id  = var.project_id
+        network             = google_compute_network.vyos_internal_vpc.self_link
+        subnetwork          = google_compute_subnetwork.vyos_internal_subnet.self_link
+        network_ip          = local.internal_vyos_2_ip
+
+        assign_external_ip = false
+        static_external_ip = null
+
         create_iap_ssh_firewall_rule = true
       }
     }

@@ -77,7 +77,7 @@ resource "google_compute_instance_group" "vyos_web_proxy_unmanaged_primary" {
   instances = [
     module.vyos_instance_1.vm_id
   ]
-  network = google_compute_network.vyos_internal_vpc.self_link
+  network = google_compute_network.vyos_external_vpc.self_link
   named_port {
     name = "webproxy"
     port = 3128
@@ -91,7 +91,7 @@ resource "google_compute_instance_group" "vyos_web_proxy_unmanaged_secondary" {
   instances = [
     module.vyos_instance_2.vm_id
   ]
-  network = google_compute_network.vyos_internal_vpc.self_link
+  network = google_compute_network.vyos_external_vpc.self_link
   named_port {
     name = "webproxy"
     port = 3128
@@ -108,6 +108,11 @@ resource "google_compute_region_backend_service" "vyos_web_proxy_backend" {
   timeout_sec           = 10
   health_checks         = [google_compute_region_health_check.vyos_webproxy_hc.self_link]
   
+  # We need to specify the network to be used as backend service, as our VMs do have multiple NICs
+  #  and we want to load-balance on the secondary NIC (internal), which is connected to the internal
+  #  vpc.
+  network               = google_compute_network.vyos_internal_vpc.self_link 
+  
   backend {
     group = google_compute_instance_group.vyos_web_proxy_unmanaged_primary.self_link
     balancing_mode  = "CONNECTION"
@@ -123,6 +128,7 @@ resource "google_compute_region_health_check" "vyos_webproxy_hc" {
   project             = var.project_id
   region              = var.region
   name                = "vyos-webproxy-hc"
+  
   tcp_health_check {
     port = 3128
   }
